@@ -1,0 +1,46 @@
+name: Python sanity check and tests
+
+on: [push]
+
+jobs:
+
+  python:
+    name: Run tests and check python code
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v3
+
+      - name: Install dependency
+        run: pip install -r requirements.txt
+
+      - name: Install development environment
+        run: pip install pytest coverage pycodestyle pyflakes mypy
+      
+      - name: Run tests and show coverage report
+        run: |
+          coverage run -m pytest --verbose
+          coverage report *.py
+
+      - name: Check code style
+        run: pycodestyle .
+
+      - name: Check python file for typical errors
+        run: pyflakes .
+
+      # type annotation checks
+      - name: Type checks
+        run: mypy .
+
+      # if you pretend to make a typed version of your program, you should uncomment these lines:  
+      # - name: Strict type checks 
+      #   run: mypy . --strict
+
+  markdown:
+    name: Lint markdown
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Lint markdown files
+      uses: actionshub/markdownlint@main
