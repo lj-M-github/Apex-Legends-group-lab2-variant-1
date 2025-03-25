@@ -249,10 +249,11 @@ class UnrolledLinkedList(Generic[T]):
         def _filter_node(node: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
             if node is None:
                 return None
-            filtered = tuple(e for e in node.elements if predicate(e))
+            # 先递归处理后续节点，再处理当前节点
             new_next = _filter_node(node.next)
+            filtered = tuple(e for e in node.elements if predicate(e))
             if not filtered:
-                return new_next  # 直接跳过空节点
+                return new_next  # 跳过当前空节点
             return ImmutableNode(elements=filtered, next=new_next)
         
         new_head = _filter_node(self.head)
@@ -260,7 +261,7 @@ class UnrolledLinkedList(Generic[T]):
             element_type=self.element_type,
             size=self.size,
             head=new_head
-        )._rebalance()._recalculate_metadata()  # 确保重新计算长度
+        )._rebalance()._recalculate_metadata()
 
     def map(self, func: Callable[[T], Any]) -> 'UnrolledLinkedList[T]':
         def _map_node(node: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
