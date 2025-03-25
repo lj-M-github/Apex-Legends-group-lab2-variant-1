@@ -179,3 +179,31 @@ def test_immutability():
     removed = remove(original, 2)
     assert member(2, original)
     assert not member(2, removed)
+
+def test_intersection():
+    # 基础交集测试
+    lst1 = from_list([1, 2, 3, 4])
+    lst2 = from_list([3, 4, 5, 6])
+    result = intersection(lst1, lst2)
+    assert to_list(result) == [3, 4]
+
+    # 空交集测试
+    assert intersection(lst1, from_list([5, 6])) == empty()
+
+    # 类型兼容性测试
+    typed_lst = from_list([1, 2])._replace(element_type=int)
+    with pytest.raises(TypeError):
+        intersection(typed_lst, from_list(["a", 1]))
+
+def test_find():
+    # 基础查找测试
+    lst = from_list([1, 3, 5, 7])
+    assert find(lst, lambda x: x % 2 == 0) is None
+    assert find(lst, lambda x: x > 4) == 5
+
+    # 空列表测试
+    assert find(empty(), lambda x: True) is None
+
+    # 嵌套结构测试
+    nested = from_list([["a", 1], [True, None]])
+    assert find(nested, lambda x: isinstance(x, list)) == ["a", 1]

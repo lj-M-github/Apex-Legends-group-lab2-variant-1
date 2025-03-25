@@ -253,6 +253,32 @@ class UnrolledLinkedList(Generic[T]):
             acc = func(acc, elem)
         return acc
     
+    def find(self, predicate: Callable[[T], bool]) -> Optional[T]:
+        def _find(node: Optional[ImmutableNode]) -> Optional[T]:
+            if node is None:
+                return None
+            for e in node.elements:
+                if predicate(e):
+                    return e
+            return _find(node.next)
+        return _find(self.head)
+
+    def intersection(self, other: 'UnrolledLinkedList[T]') -> 'UnrolledLinkedList[T]':
+        def _intersect(node: Optional[ImmutableNode]) -> 'UnrolledLinkedList[T]':
+            if node is None:
+                return self.empty()
+            filtered = tuple(e for e in node.elements if other.member(e))
+            new_next = _intersect(node.next)
+            if not filtered:
+                return new_next
+            return ImmutableNode(elements=filtered, next=new_next)
+        
+        return UnrolledLinkedList(
+            head=_intersect(self.head),
+            element_type=self.element_type,
+            size=self.size
+        )._rebalance()._recalculate_metadata()
+    
 
 # 使用示例
 if __name__ == "__main__":
@@ -264,7 +290,7 @@ if __name__ == "__main__":
     print(lst)  # (1,) -> (3,)
     
     __all__ = ['UnrolledLinkedList', 'concat', 'cons', 'empty', 'filter', 'from_list', 
-           'length', 'map', 'member', 'reduce', 'remove', 'reverse', 'to_list']
+           'length', 'map', 'member', 'reduce', 'remove', 'reverse', 'to_list', 'intersection', 'find']
 
     # 函数式API包装
     def concat(a, b):
@@ -302,3 +328,8 @@ if __name__ == "__main__":
 
     def reduce(lst, func, initial):
         return UnrolledLinkedList.reduce(lst, func, initial)
+    def intersection(lst1, lst2):
+        return lst1.intersection(lst2)
+
+    def find(lst, predicate):
+        return lst.find(predicate)
