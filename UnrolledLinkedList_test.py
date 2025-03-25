@@ -64,7 +64,7 @@ def test_filter():
     filtered = filter(lst, is_even)
     
     assert str(filtered) == "[2, 4]"
-    assert length(filtered) == 2  # 修正后应通过
+    assert length(filtered) == 2  # 修正后通过
     assert member(2, filtered)
     assert not member(3, filtered)
     

@@ -166,8 +166,8 @@ class UnrolledLinkedList(Generic[T]):
         def calculate_length(node: Optional[ImmutableNode]) -> int:
             return 0 if node is None else len(node.elements) + calculate_length(node.next)
 
-        length = calculate_length(self.head)
-        return self._replace(_length=length)
+        new_length = calculate_length(self.head)
+        return self._replace(length=new_length)
 
     # ------------------- 其他必需方法 -------------------
     def length(self) -> int:
