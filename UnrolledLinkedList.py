@@ -250,13 +250,17 @@ class UnrolledLinkedList(Generic[T]):
             if node is None:
                 return None
             filtered = tuple(e for e in node.elements if predicate(e))
+            new_next = _filter_node(node.next)
             if not filtered:
-                return _filter_node(node.next)
-            return ImmutableNode(
-                elements=filtered,
-                next=_filter_node(node.next)
-            )
-        return self._replace(head=_filter_node(self.head))._recalculate_metadata()
+                return new_next  # 直接跳过空节点
+            return ImmutableNode(elements=filtered, next=new_next)
+        
+        new_head = _filter_node(self.head)
+        return UnrolledLinkedList(
+            element_type=self.element_type,
+            size=self.size,
+            head=new_head
+        )._rebalance()._recalculate_metadata()  # 确保重新计算长度
 
     def map(self, func: Callable[[T], Any]) -> 'UnrolledLinkedList[T]':
         def _map_node(node: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
@@ -287,17 +291,18 @@ class UnrolledLinkedList(Generic[T]):
         return _find(self.head)
 
     def intersection(self, other: 'UnrolledLinkedList[T]') -> 'UnrolledLinkedList[T]':
-        def _intersect(node: Optional[ImmutableNode]) -> Optional[ImmutableNode]:  # 修改返回类型
+        # 添加类型检查
+        if self.element_type is not None and other.element_type != self.element_type:
+            raise TypeError("Element type mismatch in intersection")
+        
+        def _intersect(node: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
             if node is None:
                 return None
             filtered = tuple(e for e in node.elements if other.member(e))
             new_next = _intersect(node.next)
             if not filtered:
                 return new_next
-            return ImmutableNode(
-                elements=filtered,
-                next=new_next
-            )
+            return ImmutableNode(elements=filtered, next=new_next)
         
         new_head = _intersect(self.head)
         return UnrolledLinkedList(
