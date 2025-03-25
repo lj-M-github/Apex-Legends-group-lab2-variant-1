@@ -279,57 +279,51 @@ class UnrolledLinkedList(Generic[T]):
             size=self.size
         )._rebalance()._recalculate_metadata()
     
+# 函数式API包装
+def concat(a, b):
+    return a.concat(b)
 
-# 使用示例
-if __name__ == "__main__":
-    lst = UnrolledLinkedList[int].empty()
-    lst = lst.cons(3).cons(2).cons(1)
-    print(lst)  # (1,) -> (2,) -> (3,)
-    
-    lst = lst.remove(2)
-    print(lst)  # (1,) -> (3,)
-    
-    __all__ = ['UnrolledLinkedList', 'concat', 'cons', 'empty', 'filter', 'from_list', 
-           'length', 'map', 'member', 'reduce', 'remove', 'reverse', 'to_list', 'intersection', 'find']
+def cons(value, lst):
+    return lst.cons(value)
 
-    # 函数式API包装
-    def concat(a, b):
-        return a.concat(b)
+def empty():
+    return UnrolledLinkedList.empty()
 
-    def cons(value, lst):
-        return lst.cons(value)
+def from_list(lst):
+    return UnrolledLinkedList.from_list(lst)
 
-    def empty():
-        return UnrolledLinkedList.empty()
+def length(lst):
+    return lst.length()
 
-    def from_list(lst):
-        return UnrolledLinkedList.from_list(lst)
+def member(value, lst):
+    return lst.member(value)
 
-    def length(lst):
-        return lst.length()
+def remove(lst, value):
+    return lst.remove(value)
 
-    def member(value, lst):
-        return lst.member(value)
+def reverse(lst):
+    return lst.reverse()
 
-    def remove(lst, value):
-        return lst.remove(value)
+def to_list(lst):
+    return lst.to_list()
 
-    def reverse(lst):
-        return lst.reverse()
+def filter(lst, predicate):
+    return lst.filter(predicate)
 
-    def to_list(lst):
-        return lst.to_list()
+def map(lst, func):
+    return lst.map(func)
 
-    def filter(lst, predicate):
-        return lst.filter(predicate)
+def reduce(lst, func, initial):
+    return UnrolledLinkedList.reduce(lst, func, initial)
 
-    def map(lst, func):
-        return lst.map(func)
+def intersection(lst1, lst2):
+    return lst1.intersection(lst2)
 
-    def reduce(lst, func, initial):
-        return UnrolledLinkedList.reduce(lst, func, initial)
-    def intersection(lst1, lst2):
-        return lst1.intersection(lst2)
+def find(lst, predicate):
+    return lst.find(predicate)
 
-    def find(lst, predicate):
-        return lst.find(predicate)
+__all__ = [
+    'UnrolledLinkedList', 'concat', 'cons', 'empty', 'filter', 'from_list',
+    'length', 'map', 'member', 'reduce', 'remove', 'reverse', 'to_list',
+    'intersection', 'find'
+]
