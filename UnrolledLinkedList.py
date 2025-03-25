@@ -14,6 +14,13 @@ class ImmutableNode:
     def __repr__(self):
         return f"Node({self.elements})"
 
+    def _replace(self, **kwargs):
+        return ImmutableNode(
+            elements=kwargs.get('elements', self.elements),
+            next=kwargs.get('next', self.next),
+            last=kwargs.get('last', self.last)
+        )
+
 class UnrolledLinkedList(Generic[T]):
     size = 4
 
@@ -205,6 +212,16 @@ class UnrolledLinkedList(Generic[T]):
     # 以下方法需要类似的递归实现：
     # map, filter, reduce, from_list, intersection等
     # 由于篇幅限制，这里展示部分实现，其余方法实现逻辑类似
+
+    def _replace(self, **kwargs):
+        return UnrolledLinkedList(
+            element_type=kwargs.get('element_type', self.element_type),
+            size=kwargs.get('size', self.size),
+            head=kwargs.get('head', self.head),
+            current_node=kwargs.get('current_node', self._current_node),
+            current_index=kwargs.get('current_index', self._current_index),
+            length=kwargs.get('length', self._length)
+        )
 
     @classmethod
     def from_list(cls, lst: list) -> 'UnrolledLinkedList[T]':
