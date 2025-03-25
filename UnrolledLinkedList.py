@@ -249,9 +249,9 @@ class UnrolledLinkedList(Generic[T]):
         def _filter_node(node: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
             if node is None:
                 return None
-            # 先递归处理后续节点，再处理当前节点
-            new_next = _filter_node(node.next)
+            # 先处理当前节点，再递归处理后续节点
             filtered = tuple(e for e in node.elements if predicate(e))
+            new_next = _filter_node(node.next)
             if not filtered:
                 return new_next  # 跳过当前空节点
             return ImmutableNode(elements=filtered, next=new_next)
