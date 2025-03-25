@@ -28,7 +28,7 @@ class UnrolledLinkedList(Generic[T]):
                  head: Optional[ImmutableNode] = None, current_node: Optional[ImmutableNode] = None,
                  current_index: int = 0, length: int = 0):
         self.element_type = element_type
-        self.size = size if size is not None else size.__class__.size
+        self.size = size if size is not None else self.__class__.size  # 修正size初始化
         self.head = head
         self._current_node = current_node
         self._current_index = current_index
@@ -287,17 +287,21 @@ class UnrolledLinkedList(Generic[T]):
         return _find(self.head)
 
     def intersection(self, other: 'UnrolledLinkedList[T]') -> 'UnrolledLinkedList[T]':
-        def _intersect(node: Optional[ImmutableNode]) -> 'UnrolledLinkedList[T]':
+        def _intersect(node: Optional[ImmutableNode]) -> Optional[ImmutableNode]:  # 修改返回类型
             if node is None:
-                return self.empty()
+                return None
             filtered = tuple(e for e in node.elements if other.member(e))
             new_next = _intersect(node.next)
             if not filtered:
                 return new_next
-            return ImmutableNode(elements=filtered, next=new_next)
+            return ImmutableNode(
+                elements=filtered,
+                next=new_next
+            )
         
+        new_head = _intersect(self.head)
         return UnrolledLinkedList(
-            head=_intersect(self.head),
+            head=new_head,
             element_type=self.element_type,
             size=self.size
         )._rebalance()._recalculate_metadata()
