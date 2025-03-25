@@ -15,7 +15,7 @@ class ImmutableNode:
         return f"Node({self.elements})"
 
 class UnrolledLinkedList(Generic[T]):
-    sieze = 4
+    size = 4
 
     def __init__(self, element_type: Optional[type] = None, size: int = 4,
                  head: Optional[ImmutableNode] = None, current_node: Optional[ImmutableNode] = None,
