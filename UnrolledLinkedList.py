@@ -186,7 +186,8 @@ class UnrolledLinkedList(Generic[T]):
         return self.to_list() == other.to_list()
 
     def __str__(self) -> str:
-        return ' -> '.join(str(node.elements) for node in self._iter_nodes())
+        elements = self.to_list()
+        return f"[{', '.join(map(str, elements))}]"
 
     def __iter__(self):
         current = self.head
@@ -220,6 +221,38 @@ class UnrolledLinkedList(Generic[T]):
                 return acc
             return collect(node.next, acc + list(node.elements))
         return collect(self.head, [])
+    
+    def filter(self, predicate: Callable[[T], bool]) -> 'UnrolledLinkedList[T]':
+        def _filter_node(node: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
+            if node is None:
+                return None
+            filtered = tuple(e for e in node.elements if predicate(e))
+            if not filtered:
+                return _filter_node(node.next)
+            return ImmutableNode(
+                elements=filtered,
+                next=_filter_node(node.next)
+            )
+        return self._replace(head=_filter_node(self.head))
+
+    def map(self, func: Callable[[T], Any]) -> 'UnrolledLinkedList[T]':
+        def _map_node(node: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
+            if node is None:
+                return None
+            mapped = tuple(func(e) for e in node.elements)
+            return ImmutableNode(
+                elements=mapped,
+                next=_map_node(node.next)
+            )
+        return self._replace(head=_map_node(self.head))
+
+    @staticmethod
+    def reduce(lst: 'UnrolledLinkedList[T]', func: Callable[[Any, T], Any], initial: Any) -> Any:
+        acc = initial
+        for elem in lst:
+            acc = func(acc, elem)
+        return acc
+    
 
 # 使用示例
 if __name__ == "__main__":
@@ -229,3 +262,43 @@ if __name__ == "__main__":
     
     lst = lst.remove(2)
     print(lst)  # (1,) -> (3,)
+    
+    __all__ = ['UnrolledLinkedList', 'concat', 'cons', 'empty', 'filter', 'from_list', 
+           'length', 'map', 'member', 'reduce', 'remove', 'reverse', 'to_list']
+
+    # 函数式API包装
+    def concat(a, b):
+        return a.concat(b)
+
+    def cons(value, lst):
+        return lst.cons(value)
+
+    def empty():
+        return UnrolledLinkedList.empty()
+
+    def from_list(lst):
+        return UnrolledLinkedList.from_list(lst)
+
+    def length(lst):
+        return lst.length()
+
+    def member(value, lst):
+        return lst.member(value)
+
+    def remove(lst, value):
+        return lst.remove(value)
+
+    def reverse(lst):
+        return lst.reverse()
+
+    def to_list(lst):
+        return lst.to_list()
+
+    def filter(lst, predicate):
+        return lst.filter(predicate)
+
+    def map(lst, func):
+        return lst.map(func)
+
+    def reduce(lst, func, initial):
+        return UnrolledLinkedList.reduce(lst, func, initial)
