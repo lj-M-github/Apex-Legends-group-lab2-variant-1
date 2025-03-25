@@ -235,7 +235,7 @@ class UnrolledLinkedList(Generic[T]):
         
         return cls(
             head=build_nodes(lst, cls.size),
-            _length=len(lst)
+            length=len(lst)
         )
 
     def to_list(self) -> list:

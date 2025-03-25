@@ -24,7 +24,7 @@ def test_api():
     assert length(l2) == 2
     
     # 删除操作
-    assert str(remove(l1, 0)) == "[1]"
+    assert str(remove(l1, None)) == "[1]"
     assert str(remove(l1, 1)) == "[None]"
     
     # 成员判断
