@@ -256,7 +256,7 @@ class UnrolledLinkedList(Generic[T]):
                 elements=filtered,
                 next=_filter_node(node.next)
             )
-        return self._replace(head=_filter_node(self.head))
+        return self._replace(head=_filter_node(self.head))._recalculate_metadata()
 
     def map(self, func: Callable[[T], Any]) -> 'UnrolledLinkedList[T]':
         def _map_node(node: Optional[ImmutableNode]) -> Optional[ImmutableNode]:

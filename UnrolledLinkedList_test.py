@@ -1,4 +1,4 @@
-from UnrolledLinkedList import UnrolledLinkedList, concat, cons, empty, filter, from_list, length, map_ull, member, reduce, remove, reverse, to_list
+from UnrolledLinkedList import UnrolledLinkedList, concat, cons, empty, filter, from_list, length, map_ull, member, reduce, remove, reverse, to_list, intersection, find
 import pytest
 
 def test_api():
