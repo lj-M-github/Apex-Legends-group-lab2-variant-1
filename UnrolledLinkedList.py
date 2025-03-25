@@ -15,15 +15,21 @@ class ImmutableNode:
         return f"Node({self.elements})"
 
 class UnrolledLinkedList(Generic[T]):
+    sieze = 4
+
     def __init__(self, element_type: Optional[type] = None, size: int = 4,
                  head: Optional[ImmutableNode] = None, current_node: Optional[ImmutableNode] = None,
                  current_index: int = 0, length: int = 0):
         self.element_type = element_type
-        self.size = size
+        self.size = size if size is not None else size.__class__.size
         self.head = head
         self._current_node = current_node
         self._current_index = current_index
         self._length = length  # 缓存长度提升性能
+
+    def _check_type(self, value: T):
+        if self.element_type is not None and not isinstance(value, self.element_type):
+            raise TypeError(f"Expected {self.element_type}, got {type(value)}")
 
     @classmethod
     def empty(cls) -> 'UnrolledLinkedList':
@@ -310,7 +316,7 @@ def to_list(lst):
 def filter(lst, predicate):
     return lst.filter(predicate)
 
-def map(lst, func):
+def map_ull(lst, func):
     return lst.map(func)
 
 def reduce(lst, func, initial):
@@ -324,6 +330,6 @@ def find(lst, predicate):
 
 __all__ = [
     'UnrolledLinkedList', 'concat', 'cons', 'empty', 'filter', 'from_list',
-    'length', 'map', 'member', 'reduce', 'remove', 'reverse', 'to_list',
+    'length', 'map_ull', 'member', 'reduce', 'remove', 'reverse', 'to_list',
     'intersection', 'find'
 ]

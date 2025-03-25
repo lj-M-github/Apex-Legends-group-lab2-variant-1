@@ -1,4 +1,4 @@
-from UnrolledLinkedList import UnrolledLinkedList, concat, cons, empty, filter, from_list, length, map, member, reduce, remove, reverse, to_list
+from UnrolledLinkedList import UnrolledLinkedList, concat, cons, empty, filter, from_list, length, map_ull, member, reduce, remove, reverse, to_list
 import pytest
 
 def test_api():
@@ -75,7 +75,7 @@ def test_map():
     # 数值转换
     increment = lambda x: x + 1
     lst = from_list([1, 2, 3])
-    mapped = map(lst, increment)
+    mapped = map_ull(lst, increment)
     
     assert str(mapped) == "[2, 3, 4]"
     assert to_list(mapped) == [2, 3, 4]
