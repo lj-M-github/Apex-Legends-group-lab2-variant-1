@@ -382,7 +382,7 @@ def filter(unrolled_list: ImmutableUnrolledLinkedList,
                                        unrolled_list.node_size)
 
 
-def map_list(unrolled_list: ImmutableUnrolledLinkedList,
+def map_list(unrolled_list: ImmutableUnrolledLinkedList[Num],
              func: Callable[[Num], Num]) -> ImmutableUnrolledLinkedList:
     # Maps a function over the ImmutableUnrolledLinkedList
     if not unrolled_list or unrolled_list.head_node is None:
@@ -393,7 +393,9 @@ def map_list(unrolled_list: ImmutableUnrolledLinkedList,
             return None  # Base case: end of list
 
         # Apply func to each element, create a new tuple with mapped elements
-        mapped_elements = tuple(func(value) for value in current_node.elements)
+        elements = current_node.elements
+        mapped_values = (func(value) for value in elements)
+        mapped_elements = tuple(mapped_values)
         # Map the rest of the list recursively
         mapped_next_node = _map_recursive(current_node.next_node)
 
@@ -407,7 +409,7 @@ def map_list(unrolled_list: ImmutableUnrolledLinkedList,
                                        unrolled_list.node_size)
 
 
-def reduce(unrolled_list: ImmutableUnrolledLinkedList,
+def reduce(unrolled_list: ImmutableUnrolledLinkedList[Num],
            func: Callable[[Num, Num],
                           Num], initial_value: Optional[Num]) -> Optional[Num]:
     # Reduces the ImmutableUnrolledLinkedList to a single value
