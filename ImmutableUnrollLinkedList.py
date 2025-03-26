@@ -1,25 +1,25 @@
 from typing import Optional, Tuple, List, Callable, TypeVar, Iterable, Generic
 
-Num = TypeVar('Num', int, float, None)
-Num1 = TypeVar('Num1', int, float)
+T = TypeVar('T', int, float, None)
+U = TypeVar('U', int, float)
 
 
-class Node(Generic[Num]):
+class Node(Generic[T]):
     # Node for Immutable Unrolled Linked List
 
     def __init__(self,
-                 elements: Optional[Iterable[Num]] = None,
+                 elements: Optional[Iterable[T]] = None,
                  next_node: Optional['Node'] = None):
 
         # Initialize an immutable node.
 
-        self._elements: Tuple[Num, ...] = tuple(
+        self._elements: Tuple[T, ...] = tuple(
             elements) if elements is not None else tuple(
             )  # Added type annotation
         self._next = next_node
 
     @property
-    def elements(self) -> Tuple[Num, ...]:
+    def elements(self) -> Tuple[T, ...]:
         # Returns the elements of the node as a tuple (immutable)
         return self._elements
 
@@ -43,7 +43,7 @@ class Node(Generic[Num]):
         return self._elements == other._elements and self._next == other._next
 
 
-class ImmutableUnrolledLinkedList(Generic[Num]):
+class ImmutableUnrolledLinkedList(Generic[T]):
     # Immutable Unrolled Linked List Data Structure
 
     def __init__(self, head_node: Optional[Node] = None, node_size: int = 4):
@@ -89,7 +89,7 @@ class ImmutableUnrolledLinkedList(Generic[Num]):
         return ImmutableUnrolledLinkedListIterator(self)
 
 
-class ImmutableUnrolledLinkedListIterator(Generic[Num]):
+class ImmutableUnrolledLinkedListIterator(Generic[T]):
     # Iterator for ImmutableUnrolledLinkedList
 
     def __init__(self, unrolled_list: ImmutableUnrolledLinkedList):
@@ -104,7 +104,7 @@ class ImmutableUnrolledLinkedListIterator(Generic[Num]):
         # Returns the iterator object itself (for iter(iterator))
         return self
 
-    def __next__(self) -> Optional[Num]:
+    def __next__(self) -> Optional[T]:
         # Returns the next element in the ImmutableUnrolledLinkedList
         if self._current_node is None:
             raise StopIteration
@@ -121,7 +121,7 @@ class ImmutableUnrolledLinkedListIterator(Generic[Num]):
 
 
 def cons(
-    head_value: Num,
+    head_value: T,
     unrolled_list: Optional[ImmutableUnrolledLinkedList] = None
 ) -> ImmutableUnrolledLinkedList:
     # Adds a new element to the head of the ImmutableUnrolledLinkedList
@@ -147,13 +147,13 @@ def cons(
 
 
 def remove(unrolled_list: ImmutableUnrolledLinkedList,
-           element: Num) -> ImmutableUnrolledLinkedList:
+           element: T) -> ImmutableUnrolledLinkedList:
     # Removes the first occurrence of an element from the IULL
     if not unrolled_list or unrolled_list.head_node is None:
         return unrolled_list  # Return original empty list if empty
 
     def _remove_recursive(current_node: Optional[Node],
-                          element_to_remove: Num) -> Optional[Node]:
+                          element_to_remove: T) -> Optional[Node]:
         if current_node is None:
             return None  # Base case: element not found
 
@@ -205,13 +205,13 @@ def length(unrolled_list: Optional[ImmutableUnrolledLinkedList]) -> int:
     return _length_recursive(unrolled_list.head_node)
 
 
-def member(unrolled_list: ImmutableUnrolledLinkedList, element: Num) -> bool:
+def member(unrolled_list: ImmutableUnrolledLinkedList, element: T) -> bool:
     # Checks if an element is a member of the ImmutableUnrolledLinkedList
     if not unrolled_list or unrolled_list.head_node is None:
         return False
 
     def _member_recursive(current_node: Optional[Node],
-                          element_to_find: Num) -> bool:
+                          element_to_find: T) -> bool:
         if current_node is None:
             return False
         if element_to_find in current_node.elements:
@@ -250,8 +250,8 @@ def reverse(
 
 
 def intersection(
-    unrolled_list1: ImmutableUnrolledLinkedList[Num],
-    unrolled_list2: ImmutableUnrolledLinkedList[Num]
+    unrolled_list1: ImmutableUnrolledLinkedList[T],
+    unrolled_list2: ImmutableUnrolledLinkedList[T]
 ) -> ImmutableUnrolledLinkedList:
     # Returns the intersection of two ImmutableUnrolledLinkedLists
     if (not unrolled_list1 or not unrolled_list2
@@ -262,7 +262,7 @@ def intersection(
             None, unrolled_list1.node_size
             if unrolled_list1 else unrolled_list2.node_size)
 
-    intersection_values: List[Num] = []  # Added type annotation
+    intersection_values: List[T] = []  # Added type annotation
 
     def _intersection_recursive(current_node: Optional[Node]):
         nonlocal intersection_values  # Allow modifying outer variable
@@ -281,9 +281,9 @@ def intersection(
                                        unrolled_list1.node_size)
 
 
-def to_list(unrolled_list: ImmutableUnrolledLinkedList) -> List[Num]:
+def to_list(unrolled_list: ImmutableUnrolledLinkedList) -> List[T]:
     # Converts the ImmutableUnrolledLinkedList to a list
-    res: List[Num] = []
+    res: List[T] = []
     if not unrolled_list or unrolled_list.head_node is None:
         return res  # Return empty list if empty
 
@@ -298,15 +298,15 @@ def to_list(unrolled_list: ImmutableUnrolledLinkedList) -> List[Num]:
     return res
 
 
-def from_list(python_list: List[Num],
+def from_list(python_list: List[T],
               node_size: int = 4) -> ImmutableUnrolledLinkedList:
     # Creates an ImmutableUnrolledLinkedList from a list
     if not python_list:
         return ImmutableUnrolledLinkedList(None, node_size)
 
     head_node = None
-    current_node_values: List[Num] = []  # Added type annotation
-    current_node_pointer: Optional[Node[Num]] = None
+    current_node_values: List[T] = []  # Added type annotation
+    current_node_pointer: Optional[Node[T]] = None
 
     for item in python_list:
         current_node_values.append(item)
@@ -335,14 +335,14 @@ def from_list(python_list: List[Num],
 
 
 def find(unrolled_list: ImmutableUnrolledLinkedList,
-         predicate: Callable[[Num], bool]) -> Optional[Num]:
+         predicate: Callable[[T], bool]) -> Optional[T]:
     # Finds the first element that satisfies the predicate in the IULL
     if not unrolled_list or unrolled_list.head_node is None:
         return None
 
     def _find_recursive(
             current_node: Optional[Node],
-            predicate_func: Callable[[Num], bool]) -> Optional[Num]:
+            predicate_func: Callable[[T], bool]) -> Optional[T]:
         if current_node is None:
             return None
 
@@ -357,12 +357,12 @@ def find(unrolled_list: ImmutableUnrolledLinkedList,
 
 
 def filter(unrolled_list: ImmutableUnrolledLinkedList,
-           predicate: Callable[[Num], bool]) -> ImmutableUnrolledLinkedList:
+           predicate: Callable[[T], bool]) -> ImmutableUnrolledLinkedList:
     # Filters the ImmutableUnrolledLinkedList based on a predicate
     if not unrolled_list or unrolled_list.head_node is None:
         return unrolled_list  # Return original empty list if empty
 
-    filtered_values: List[Num] = []  # Added type annotation
+    filtered_values: List[T] = []  # Added type annotation
 
     def _filter_recursive(current_node: Optional[Node]):
         nonlocal filtered_values
@@ -383,8 +383,8 @@ def filter(unrolled_list: ImmutableUnrolledLinkedList,
                                        unrolled_list.node_size)
 
 
-def map_list(unrolled_list: ImmutableUnrolledLinkedList[Num],
-             func: Callable[[Num1], Num1]) -> ImmutableUnrolledLinkedList:
+def map_list(unrolled_list: ImmutableUnrolledLinkedList[T],
+             func: Callable[[U], U]) -> ImmutableUnrolledLinkedList:
     # Maps a function over the ImmutableUnrolledLinkedList
     if not unrolled_list or unrolled_list.head_node is None:
         return unrolled_list  # Return original empty list if empty
@@ -410,9 +410,9 @@ def map_list(unrolled_list: ImmutableUnrolledLinkedList[Num],
                                        unrolled_list.node_size)
 
 
-def reduce(unrolled_list: ImmutableUnrolledLinkedList[Num1],
-           func: Callable[[Num1, Num1], Num1],
-           initial_value: Optional[Num1]) -> Optional[Num1]:
+def reduce(unrolled_list: ImmutableUnrolledLinkedList[U],
+           func: Callable[[U, U], U],
+           initial_value: Optional[U]) -> Optional[U]:
     # Reduces the ImmutableUnrolledLinkedList to a single value
     if not unrolled_list or unrolled_list.head_node is None:
         return initial_value  # Return initial value if the list is empty

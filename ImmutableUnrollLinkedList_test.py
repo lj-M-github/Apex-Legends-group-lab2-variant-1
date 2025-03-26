@@ -2,7 +2,27 @@ from ImmutableUnrollLinkedList import ImmutableUnrolledLinkedList, cons, length
 from ImmutableUnrollLinkedList import concat, reduce, remove, reverse, map_list
 from ImmutableUnrollLinkedList import member, to_list, filter, find
 from ImmutableUnrollLinkedList import from_list, empty, intersection
+from hypothesis import given
+import hypothesis.strategies as st
 
+@given(
+    a=st.lists(st.integers() | st.none()),
+    b=st.lists(st.integers() | st.none()),
+    c=st.lists(st.integers() | st.none())
+)
+def test_monoid_associativity(a: list, b: list, c: list):
+    # 将列表转换为不可变展开链表
+    ull_a = from_list(a)
+    ull_b = from_list(b)
+    ull_c = from_list(c)
+
+    # 计算 (a + b) + c
+    left = concat(concat(ull_a, ull_b), ull_c)
+    # 计算 a + (b + c)
+    right = concat(ull_a, concat(ull_b, ull_c))
+
+    # 验证结果是否一致
+    assert to_list(left) == to_list(right)
 
 def test_IULL_api():
     empty_list = ImmutableUnrolledLinkedList()
@@ -151,3 +171,4 @@ def test_IULL_api():
 
 if __name__ == '__main__':
     test_IULL_api()
+    test_monoid_associativity()
