@@ -252,6 +252,7 @@ def intersection(
     unrolled_list1: ImmutableUnrolledLinkedList,
     unrolled_list2: ImmutableUnrolledLinkedList
 ) -> ImmutableUnrolledLinkedList:
+    Num = TypeVar('Num', int, float, None)
     # Returns the intersection of two ImmutableUnrolledLinkedLists
     if (not unrolled_list1 or not unrolled_list2
             or unrolled_list1.head_node is None
