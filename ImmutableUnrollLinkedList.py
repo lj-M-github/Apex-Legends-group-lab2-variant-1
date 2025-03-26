@@ -2,33 +2,28 @@ from typing import Optional, Tuple, List, Callable, TypeVar, Iterable
 
 
 class Node:
-    """Node for Immutable Unrolled Linked List"""
+    # Node for Immutable Unrolled Linked List
     Num = TypeVar('Num', int, float)
 
-    def __init__(self, elements: Optional[Iterable[Num]] = None, next_node: Optional['Node'] = None):
-        """
-        Initialize an immutable node.
-
-        Args:
-            elements (Optional[Iterable[Num]]): The elements to be stored in this node as an immutable tuple.
-            next_node (Optional['Node']): Points to the next node in the linked list, or None if it's the last node.
-        """
+    def __init__(self,
+                 elements: Optional[Iterable[Num]] = None,
+                 next_node: Optional['Node'] = None):
+        # Initialize an immutable node.
         self._elements = tuple(elements) if elements is not None else tuple()
-        self._next = next_node  # Points to the next node in the linked list, renamed to _next
-        # self.last = None  # Removed last pointer for immutability and simplicity
+        self._next = next_node
 
     @property
     def elements(self) -> Tuple[Num, ...]:
-        """Returns the elements of the node as a tuple (immutable)."""
+        # Returns the elements of the node as a tuple (immutable)
         return self._elements
 
     @property
     def next_node(self) -> Optional['Node']:
-        """Returns the next node (immutable)."""
+        # Returns the next node (immutable)
         return self._next
 
     def __str__(self) -> str:
-        """String representation of the Node for easy printing."""
+        # String representation of the Node for easy printing
         elements_str = ", ".join(map(str, self._elements))
         next_str = ""
         if self._next:
@@ -36,24 +31,19 @@ class Node:
         return f"[{elements_str}]{next_str}"
 
     def __eq__(self, other: object) -> bool:
-        """Equality check for Node objects."""
+        # Equality check for Node objects
         if not isinstance(other, Node):
             return False
         return self._elements == other._elements and self._next == other._next
 
 
 class ImmutableUnrolledLinkedList:
-    """Immutable Unrolled Linked List Data Structure"""
+    # Immutable Unrolled Linked List Data Structure
     Num = TypeVar('Num', int, float)
 
     def __init__(self, head_node: Optional[Node] = None, node_size: int = 4):
-        """
-        Initializes an ImmutableUnrolledLinkedList.
+        # Initializes an ImmutableUnrolledLinkedList.
 
-        Args:
-            head_node (Optional[Node]): The head Node of the list. Defaults to None for an empty list.
-            node_size (int): The fixed size of each Node in this list. Defaults to 4.
-        """
         if head_node is not None and not isinstance(head_node, Node):
             raise TypeError("head_node must be a Node or None")
 
@@ -65,45 +55,49 @@ class ImmutableUnrolledLinkedList:
 
     @property
     def head_node(self) -> Optional[Node]:
-        """Returns the head Node of the list (immutable)."""
+        # Returns the head Node of the list (immutable)
         return self._head_node
 
     @property
     def node_size(self) -> int:
-        """Returns the fixed node size for this list (immutable)."""
+        # Returns the fixed node size for this list (immutable)
         return self._node_size
 
     def __str__(self) -> str:
-        """String representation of the UnrolledLinkedList."""
+        # String representation of the UnrolledLinkedList
         if self._head_node is None:
             return "[]"  # Empty list representation
         return str(self._head_node)
 
     def __eq__(self, other: object) -> bool:
-        """Equality check for UnrolledLinkedList objects."""
+        # Equality check for UnrolledLinkedList objects
         if not isinstance(other, ImmutableUnrolledLinkedList):
             return False
-        return self._head_node == other._head_node and self._node_size == other._node_size
+
+        check_headnode = (self._head_node == other._head_node)
+        check_nodesize = (self._node_size == other._node_size)
+        return check_headnode and check_nodesize
 
     def __iter__(self):
-        """Makes the ImmutableUnrolledLinkedList iterable. Returns an iterator."""
-        return ImmutableUnrolledLinkedListIterator(self)  # Return iterator class instance
+        # Makes the ImmutableUnrolledLinkedList iterable. Returns an iterator
+        return ImmutableUnrolledLinkedListIterator(
+            self)  # Return iterator class
 
 
 class ImmutableUnrolledLinkedListIterator:
-    """Iterator for ImmutableUnrolledLinkedList"""
+    # Iterator for ImmutableUnrolledLinkedList
 
     def __init__(self, unrolled_list: ImmutableUnrolledLinkedList):
-        """Initialize the iterator with an UnrolledLinkedList."""
+        # Initialize the iterator with an UnrolledLinkedList
         self._current_node = unrolled_list.head_node
         self._current_element_index = 0
 
     def __iter__(self):
-        """Returns the iterator object itself (for iter(iterator))."""
+        # Returns the iterator object itself (for iter(iterator))
         return self
 
     def __next__(self) -> Optional[ImmutableUnrolledLinkedList.Num]:
-        """Returns the next element in the ImmutableUnrolledLinkedList."""
+        # Returns the next element in the ImmutableUnrolledLinkedList
         if self._current_node is None:
             raise StopIteration
 
@@ -114,14 +108,16 @@ class ImmutableUnrolledLinkedListIterator:
         else:
             self._current_node = self._current_node.next_node
             self._current_element_index = 0
-            return self.__next__()  # Recursive call to get element from new node
+            return self.__next__()
+            # Recursive call to get element from new node
 
 
-# --- API Functions (Function-style) ---
-
-def cons(head_value: ImmutableUnrolledLinkedList.Num, unrolled_list: Optional[ImmutableUnrolledLinkedList] = None) -> ImmutableUnrolledLinkedList:
-    """Adds a new element to the head of the ImmutableUnrolledLinkedList."""
-    node_size = unrolled_list.node_size if unrolled_list else 4  # Default node_size if list is None
+def cons(
+    head_value: ImmutableUnrolledLinkedList.Num,
+    unrolled_list: Optional[ImmutableUnrolledLinkedList] = None
+) -> ImmutableUnrolledLinkedList:
+    # Adds a new element to the head of the ImmutableUnrolledLinkedList
+    node_size = unrolled_list.node_size if unrolled_list else 4
 
     if not unrolled_list or unrolled_list.head_node is None:  # Empty list case
         return ImmutableUnrolledLinkedList(Node([head_value], None), node_size)
@@ -130,7 +126,7 @@ def cons(head_value: ImmutableUnrolledLinkedList.Num, unrolled_list: Optional[Im
 
     if len(head_node.elements) < node_size:  # Head node not full
         # Create new tuple with prepended element
-        new_elements = (head_value,) + head_node.elements
+        new_elements = (head_value, ) + head_node.elements
         # Create new head node
         new_head_node = Node(new_elements, head_node.next_node)
         # Return new list with new head
@@ -142,12 +138,18 @@ def cons(head_value: ImmutableUnrolledLinkedList.Num, unrolled_list: Optional[Im
         return ImmutableUnrolledLinkedList(new_head_node, node_size)
 
 
-def remove(unrolled_list: ImmutableUnrolledLinkedList, element: ImmutableUnrolledLinkedList.Num) -> ImmutableUnrolledLinkedList:
-    """Removes the first occurrence of an element from the ImmutableUnrolledLinkedList."""
+def remove(
+        unrolled_list: ImmutableUnrolledLinkedList,
+        element: ImmutableUnrolledLinkedList.Num
+) -> ImmutableUnrolledLinkedList:
+    # Removes the first occurrence of an element from the IULL
     if not unrolled_list or unrolled_list.head_node is None:
         return unrolled_list  # Return original empty list if empty
 
-    def _remove_recursive(current_node: Optional[Node], element_to_remove: ImmutableUnrolledLinkedList.Num) -> Optional[Node]:
+    def _remove_recursive(
+            current_node: Optional[Node],
+            element_to_remove: ImmutableUnrolledLinkedList.Num
+    ) -> Optional[Node]:
         if current_node is None:
             return None  # Base case: element not found
 
@@ -168,40 +170,45 @@ def remove(unrolled_list: ImmutableUnrolledLinkedList, element: ImmutableUnrolle
                 # Return the rest of the list (tail)
                 return current_node.next_node
         else:  # Element not found in current node, recurse
-            next_node_recursive = _remove_recursive(
-                current_node.next_node, element_to_remove)
-            if next_node_recursive == current_node.next_node:  # No change in tail, reuse current node
-                return current_node  # No change in this branch
-            else:  # Tail changed, need to create a new node linking to the modified tail
+            next_node_recursive = _remove_recursive(current_node.next_node,
+                                                    element_to_remove)
+            if next_node_recursive == current_node.next_node:
+                return current_node  # tail no change, reuse current node
+            else:  # create a new node linking to the modified tail
                 # Create new node linking to modified tail
                 return Node(current_node.elements, next_node_recursive)
 
     modified_head_node = _remove_recursive(unrolled_list.head_node, element)
-    if modified_head_node == unrolled_list.head_node:  # No change in head, reuse original list
-        return unrolled_list
+    if modified_head_node == unrolled_list.head_node:
+        return unrolled_list  # No change in head, reuse original list
     else:  # Head changed, return new list with modified head
-        return ImmutableUnrolledLinkedList(modified_head_node, unrolled_list.node_size)
+        return ImmutableUnrolledLinkedList(modified_head_node,
+                                           unrolled_list.node_size)
 
 
 def length(unrolled_list: Optional[ImmutableUnrolledLinkedList]) -> int:
-    """Returns the length of the ImmutableUnrolledLinkedList."""
+    # Returns the length of the ImmutableUnrolledLinkedList
     if not unrolled_list or unrolled_list.head_node is None:
         return 0
 
     def _length_recursive(current_node: Optional[Node]) -> int:
         if current_node is None:
             return 0
-        return len(current_node.elements) + _length_recursive(current_node.next_node)
+        return len(current_node.elements) + _length_recursive(
+            current_node.next_node)
 
     return _length_recursive(unrolled_list.head_node)
 
 
-def member(unrolled_list: ImmutableUnrolledLinkedList, element: ImmutableUnrolledLinkedList.Num) -> bool:
-    """Checks if an element is a member of the ImmutableUnrolledLinkedList."""
+def member(unrolled_list: ImmutableUnrolledLinkedList,
+           element: ImmutableUnrolledLinkedList.Num) -> bool:
+    # Checks if an element is a member of the ImmutableUnrolledLinkedList
     if not unrolled_list or unrolled_list.head_node is None:
         return False
 
-    def _member_recursive(current_node: Optional[Node], element_to_find: ImmutableUnrolledLinkedList.Num) -> bool:
+    def _member_recursive(
+            current_node: Optional[Node],
+            element_to_find: ImmutableUnrolledLinkedList.Num) -> bool:
         if current_node is None:
             return False
         if element_to_find in current_node.elements:
@@ -211,33 +218,46 @@ def member(unrolled_list: ImmutableUnrolledLinkedList, element: ImmutableUnrolle
     return _member_recursive(unrolled_list.head_node, element)
 
 
-def reverse(unrolled_list: ImmutableUnrolledLinkedList) -> ImmutableUnrolledLinkedList:
-    """Reverses the ImmutableUnrolledLinkedList."""
+def reverse(
+        unrolled_list: ImmutableUnrolledLinkedList
+) -> ImmutableUnrolledLinkedList:
+    # Reverses the ImmutableUnrolledLinkedList
     if not unrolled_list or unrolled_list.head_node is None:
         return unrolled_list  # Return original empty list if empty
 
-    def _reverse_recursive(current_node: Optional[Node], accumulated_list: Optional[Node]) -> Optional[Node]:
+    def _reverse_recursive(current_node: Optional[Node],
+                           accumulated_list: Optional[Node]) -> Optional[Node]:
         if current_node is None:
             return accumulated_list
 
         reversed_current_node_values = reversed(
             current_node.elements)  # Reverse elements in current node
         # Create node from reversed values
-        reversed_node = from_list(
-            list(reversed_current_node_values), unrolled_list.node_size).head_node
+        reversed_node = from_list(list(reversed_current_node_values),
+                                  unrolled_list.node_size).head_node
 
         # Prepend reversed node
-        return _reverse_recursive(current_node.next_node, concat_nodes(reversed_node, accumulated_list))
+        return _reverse_recursive(
+            current_node.next_node,
+            concat_nodes(reversed_node, accumulated_list))
 
     reversed_head_node = _reverse_recursive(unrolled_list.head_node, None)
-    return ImmutableUnrolledLinkedList(reversed_head_node, unrolled_list.node_size)
+    return ImmutableUnrolledLinkedList(reversed_head_node,
+                                       unrolled_list.node_size)
 
 
-def intersection(unrolled_list1: ImmutableUnrolledLinkedList, unrolled_list2: ImmutableUnrolledLinkedList) -> ImmutableUnrolledLinkedList:
-    # Returns the intersection of two ImmutableUnrolledLinkedLists (assuming set behavior)."""
-    if not unrolled_list1 or not unrolled_list2 or unrolled_list1.head_node is None or unrolled_list2.head_node is None:
+def intersection(
+    unrolled_list1: ImmutableUnrolledLinkedList,
+    unrolled_list2: ImmutableUnrolledLinkedList
+) -> ImmutableUnrolledLinkedList:
+    # Returns the intersection of two ImmutableUnrolledLinkedLists
+    if (not unrolled_list1 or not unrolled_list2
+            or unrolled_list1.head_node is None
+            or unrolled_list2.head_node is None):
         # Return empty list
-        return ImmutableUnrolledLinkedList(None, unrolled_list1.node_size if unrolled_list1 else unrolled_list2.node_size)
+        return ImmutableUnrolledLinkedList(
+            None, unrolled_list1.node_size
+            if unrolled_list1 else unrolled_list2.node_size)
 
     intersection_values = []
 
@@ -252,12 +272,15 @@ def intersection(unrolled_list1: ImmutableUnrolledLinkedList, unrolled_list2: Im
         _intersection_recursive(current_node.next_node)  # Recurse
 
     _intersection_recursive(unrolled_list1.head_node)
-    intersection_head_node = from_list(
-        intersection_values, unrolled_list1.node_size).head_node
-    return ImmutableUnrolledLinkedList(intersection_head_node, unrolled_list1.node_size)
+    intersection_head_node = from_list(intersection_values,
+                                       unrolled_list1.node_size).head_node
+    return ImmutableUnrolledLinkedList(intersection_head_node,
+                                       unrolled_list1.node_size)
 
 
-def to_list(unrolled_list: ImmutableUnrolledLinkedList) -> List[ImmutableUnrolledLinkedList.Num]:
+def to_list(
+    unrolled_list: ImmutableUnrolledLinkedList
+) -> List[ImmutableUnrolledLinkedList.Num]:
     # Converts the ImmutableUnrolledLinkedList to a list
     res = []
     if not unrolled_list or unrolled_list.head_node is None:
@@ -274,7 +297,8 @@ def to_list(unrolled_list: ImmutableUnrolledLinkedList) -> List[ImmutableUnrolle
     return res
 
 
-def from_list(python_list: List[ImmutableUnrolledLinkedList.Num], node_size: int = 4) -> ImmutableUnrolledLinkedList:
+def from_list(python_list: List[ImmutableUnrolledLinkedList.Num],
+              node_size: int = 4) -> ImmutableUnrolledLinkedList:
     # Creates an ImmutableUnrolledLinkedList from a list
     if not python_list:
         return ImmutableUnrolledLinkedList(None, node_size)
@@ -305,12 +329,18 @@ def from_list(python_list: List[ImmutableUnrolledLinkedList.Num], node_size: int
     return ImmutableUnrolledLinkedList(head_node, node_size)
 
 
-def find(unrolled_list: ImmutableUnrolledLinkedList, predicate: Callable[[ImmutableUnrolledLinkedList.Num], bool]) -> Optional[ImmutableUnrolledLinkedList.Num]:
-    # Finds the first element that satisfies the predicate in the ImmutableUnrolledLinkedList
+def find(
+    unrolled_list: ImmutableUnrolledLinkedList,
+    predicate: Callable[[ImmutableUnrolledLinkedList.Num], bool]
+) -> Optional[ImmutableUnrolledLinkedList.Num]:
+    # Finds the first element that satisfies the predicate in the IULL
     if not unrolled_list or unrolled_list.head_node is None:
         return None
 
-    def _find_recursive(current_node: Optional[Node], predicate_func: Callable[[ImmutableUnrolledLinkedList.Num], bool]) -> Optional[ImmutableUnrolledLinkedList.Num]:
+    def _find_recursive(
+        current_node: Optional[Node],
+        predicate_func: Callable[[ImmutableUnrolledLinkedList.Num], bool]
+    ) -> Optional[ImmutableUnrolledLinkedList.Num]:
         if current_node is None:
             return None
 
@@ -324,7 +354,10 @@ def find(unrolled_list: ImmutableUnrolledLinkedList, predicate: Callable[[Immuta
     return _find_recursive(unrolled_list.head_node, predicate)
 
 
-def filter(unrolled_list: ImmutableUnrolledLinkedList, predicate: Callable[[ImmutableUnrolledLinkedList.Num], bool]) -> ImmutableUnrolledLinkedList:
+def filter(
+    unrolled_list: ImmutableUnrolledLinkedList,
+    predicate: Callable[[ImmutableUnrolledLinkedList.Num], bool]
+) -> ImmutableUnrolledLinkedList:
     # Filters the ImmutableUnrolledLinkedList based on a predicate
     if not unrolled_list or unrolled_list.head_node is None:
         return unrolled_list  # Return original empty list if empty
@@ -344,12 +377,17 @@ def filter(unrolled_list: ImmutableUnrolledLinkedList, predicate: Callable[[Immu
 
     _filter_recursive(unrolled_list.head_node)
     # Create new list with filtered values
-    filtered_head_node = from_list(
-        filtered_values, unrolled_list.node_size).head_node
-    return ImmutableUnrolledLinkedList(filtered_head_node, unrolled_list.node_size)
+    filtered_head_node = from_list(filtered_values,
+                                   unrolled_list.node_size).head_node
+    return ImmutableUnrolledLinkedList(filtered_head_node,
+                                       unrolled_list.node_size)
 
 
-def map_list(unrolled_list: ImmutableUnrolledLinkedList, func: Callable[[ImmutableUnrolledLinkedList.Num], ImmutableUnrolledLinkedList.Num]) -> ImmutableUnrolledLinkedList:
+def map_list(
+    unrolled_list: ImmutableUnrolledLinkedList,
+    func: Callable[[ImmutableUnrolledLinkedList.Num],
+                   ImmutableUnrolledLinkedList.Num]
+) -> ImmutableUnrolledLinkedList:
     # "Maps a function over the ImmutableUnrolledLinkedLis
     if not unrolled_list or unrolled_list.head_node is None:
         return unrolled_list  # Return original empty list if empty
@@ -367,13 +405,19 @@ def map_list(unrolled_list: ImmutableUnrolledLinkedList, func: Callable[[Immutab
         return Node(mapped_elements, mapped_next_node)
 
     mapped_head_node = _map_recursive(unrolled_list.head_node)
-    return ImmutableUnrolledLinkedList(mapped_head_node, unrolled_list.node_size)
+    return ImmutableUnrolledLinkedList(mapped_head_node,
+                                       unrolled_list.node_size)
 
 
-def reduce(unrolled_list: ImmutableUnrolledLinkedList, func: Callable[[ImmutableUnrolledLinkedList.Num, ImmutableUnrolledLinkedList.Num], ImmutableUnrolledLinkedList.Num], initial_value: ImmutableUnrolledLinkedList.Num) -> ImmutableUnrolledLinkedList.Num:
+def reduce(
+    unrolled_list: ImmutableUnrolledLinkedList, func: Callable[
+        [ImmutableUnrolledLinkedList.Num, ImmutableUnrolledLinkedList.Num],
+        ImmutableUnrolledLinkedList.Num],
+    initial_value: ImmutableUnrolledLinkedList.Num
+) -> ImmutableUnrolledLinkedList.Num:
     # Reduces the ImmutableUnrolledLinkedList to a single value
     state = initial_value
-    current_node = unrolled_list.head_node if unrolled_list else None  # Handle None list
+    current_node = unrolled_list.head_node if unrolled_list else None
 
     while current_node is not None:
         for value in current_node.elements:
@@ -387,25 +431,31 @@ def empty(node_size: int = 4) -> ImmutableUnrolledLinkedList:
     return ImmutableUnrolledLinkedList(None, node_size)
 
 
-def concat(unrolled_list1: ImmutableUnrolledLinkedList, unrolled_list2: ImmutableUnrolledLinkedList) -> ImmutableUnrolledLinkedList:
+def concat(
+    unrolled_list1: ImmutableUnrolledLinkedList,
+    unrolled_list2: ImmutableUnrolledLinkedList
+) -> ImmutableUnrolledLinkedList:
     # Concat two ImmutableUnrolledLinkedLists
     if not unrolled_list1 or unrolled_list1.head_node is None:
         return unrolled_list2  # If list1 is empty, return list2
 
-    concatenated_values = to_list(
-        unrolled_list1) + to_list(unrolled_list2)  # l1+l2
+    concatenated_values = to_list(unrolled_list1) + to_list(
+        unrolled_list2)  # l1+l2
 
     # Rebuild list from concatenated values
     return from_list(concatenated_values, unrolled_list1.node_size)
 
 
-def concat_nodes(node1: Optional[Node], node2: Optional[Node]) -> Optional[Node]:
+def concat_nodes(node1: Optional[Node],
+                 node2: Optional[Node]) -> Optional[Node]:
     # Helper function to concatenate Node chains, used internally for reverse
     if node1 is None:
         return node2
     return Node(node1.elements, concat_nodes(node1.next_node, node2))
 
 
-def iterator(unrolled_list: ImmutableUnrolledLinkedList) -> 'ImmutableUnrolledLinkedListIterator':
+def iterator(
+    unrolled_list: ImmutableUnrolledLinkedList
+) -> 'ImmutableUnrolledLinkedListIterator':
     # Returns an iterator for the ImmutableUnrolledLinkedList
     return ImmutableUnrolledLinkedListIterator(unrolled_list)

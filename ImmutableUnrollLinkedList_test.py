@@ -1,9 +1,11 @@
-from ImmutableUnrollLinkedList import ImmutableUnrolledLinkedList, cons, length, concat, reduce, remove, reverse, map_list, member, to_list, filter, find, from_list, empty
+from ImmutableUnrollLinkedList import ImmutableUnrolledLinkedList, cons, length
+from ImmutableUnrollLinkedList import concat, reduce, remove, reverse, map_list
+from ImmutableUnrollLinkedList import member, to_list, filter, find
+from ImmutableUnrollLinkedList import from_list, empty, intersection
 
 
 def test_IULL_api():
-    empty_list = ImmutableUnrolledLinkedList()  # Define empty list with node_size=2
-    # Define l1 and l2 with node_size=2, removed node_size=2 parameter in cons calls in test Lab2
+    empty_list = ImmutableUnrolledLinkedList()
     l1 = cons(None, cons(1, empty_list))
     l2 = cons(1, cons(None, empty_list))
 
@@ -33,13 +35,12 @@ def test_IULL_api():
     assert not member(l1, 2)
 
     # to_list
-    assert to_list(empty_list) == []  # Changed empty to empty_list
-    assert to_list(l1) == [None, 1]  # Changed empty to empty_list
-    assert to_list(l2) == [1, None]  # Changed empty to empty_list
+    assert to_list(empty_list) == []
+    assert to_list(l1) == [None, 1]
+    assert to_list(l2) == [1, None]
 
     # from_list
-    test_data = [[], [1], [2, 3], [1, 2, 3],
-                 [None, 1]]  # More concrete test data
+    test_data = [[], [1], [2, 3], [1, 2, 3], [None, 1]]
     for e in test_data:
         assert to_list(from_list(e)) == e
 
@@ -67,6 +68,11 @@ def test_IULL_api():
     assert to_list(lst) == tmp
 
     list_iterator = iter(empty_list)
+    try:
+        next(list_iterator)  # get next element from empty IULL
+        assert False, "StopIteration was not raised for empty list iterator"
+    except StopIteration:
+        pass
 
     # filter
     test_list = from_list([1, 2, 3, 4, 5])
@@ -81,14 +87,14 @@ def test_IULL_api():
     # Map function: multiply by 2
     mapped_list = map_list(test_list, lambda x: x * 2)
     assert to_list(mapped_list) == [2, 4, 6]
-
+    # Map function: x + 1
     empty_mapped_list = map_list(empty_list, lambda x: x + 1)
     assert to_list(empty_mapped_list) == []
 
     # reduce
     test_list = from_list([1, 2, 3, 4])
-    sum_result = reduce(test_list, lambda acc, x: acc +
-                        x, 0)  # Reduce function: sum
+    # Reduce function: sum
+    sum_result = reduce(test_list, lambda acc, x: acc + x, 0)
     assert sum_result == 10
 
     empty_reduce_result = reduce(empty_list, lambda acc, x: acc + x, 0)
@@ -100,6 +106,47 @@ def test_IULL_api():
     assert empty_list_test.node_size == 3
     assert length(empty_list_test) == 0
     assert to_list(empty_list_test) == []
+
+    # find
+    test_list = from_list([1, 2, 3, 4])
+    found_element = find(test_list, lambda x: x % 2 == 0)
+    assert found_element == 2
+    # Find None in a list with None
+    list_with_none = from_list([1, None, 3])
+    found_none = find(list_with_none, lambda x: x is None)
+    assert found_none is None
+
+    # Element not found
+    not_found_element = find(test_list, lambda x: x > 10)
+    assert not_found_element is None
+
+    # Find in empty list
+    empty_find_result = find(empty_list, lambda x: x > 0)
+    assert empty_find_result is None
+
+    # intersection
+    list1 = from_list([1, 2, 3, 4])
+    list2 = from_list([3, 4, 5, 6])
+    # Common elements [3, 4]
+    intersection_list = intersection(list1, list2)
+    assert to_list(intersection_list) == [3, 4]
+
+    # No common elements, empty list
+    list3 = from_list([7, 8, 9])
+    no_intersection_list = intersection(list1, list3)
+    assert to_list(no_intersection_list) == []
+
+    # Intersection with self is self
+    same_list_intersection = intersection(list1, list1)
+    assert to_list(same_list_intersection) == to_list(list1)
+
+    # Intersection with empty list is empty
+    list_empty_intersection = intersection(list1, empty_list)
+    assert to_list(list_empty_intersection) == []
+
+    # Intersection of two empty lists is empty
+    empty_empty_intersection = intersection(empty_list, empty_list)
+    assert to_list(empty_empty_intersection) == []
 
 
 if __name__ == '__main__':
