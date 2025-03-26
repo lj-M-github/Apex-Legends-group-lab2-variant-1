@@ -305,7 +305,7 @@ def from_list(python_list: List[Num],
 
     head_node = None
     current_node_values: List[Num] = []  # Added type annotation
-    current_node_pointer = None
+    current_node_pointer: Optional[Node[Num]] = None
 
     for item in python_list:
         current_node_values.append(item)
@@ -316,7 +316,8 @@ def from_list(python_list: List[Num],
                 head_node = new_node
                 current_node_pointer = head_node
             else:
-                current_node_pointer._next = new_node
+                if current_node_pointer is not None:
+                    current_node_pointer._next = new_node
                 current_node_pointer = new_node
             current_node_values = []
 
@@ -326,7 +327,8 @@ def from_list(python_list: List[Num],
         if head_node is None:
             head_node = new_node
         else:
-            current_node_pointer._next = new_node
+            if current_node_pointer is not None:
+                current_node_pointer._next = new_node
 
     return ImmutableUnrolledLinkedList(head_node, node_size)
 
@@ -382,7 +384,7 @@ def filter(unrolled_list: ImmutableUnrolledLinkedList,
 
 def map_list(unrolled_list: ImmutableUnrolledLinkedList,
              func: Callable[[Num], Num]) -> ImmutableUnrolledLinkedList:
-    # "Maps a function over the ImmutableUnrolledLinkedLis
+    # Maps a function over the ImmutableUnrolledLinkedList
     if not unrolled_list or unrolled_list.head_node is None:
         return unrolled_list  # Return original empty list if empty
 
@@ -390,30 +392,37 @@ def map_list(unrolled_list: ImmutableUnrolledLinkedList,
         if current_node is None:
             return None  # Base case: end of list
 
-        # Apply func to each element, create tuple
+        # Apply func to each element, create a new tuple with mapped elements
         mapped_elements = tuple(func(value) for value in current_node.elements)
         # Map the rest of the list recursively
         mapped_next_node = _map_recursive(current_node.next_node)
 
-        # Create new node with mapped elements
+        # Create new node with mapped elements and return it
         return Node(mapped_elements, mapped_next_node)
 
     mapped_head_node = _map_recursive(unrolled_list.head_node)
+
+    # Ensure we return an ImmutableUnrolledLinkedList with the new head node
     return ImmutableUnrolledLinkedList(mapped_head_node,
                                        unrolled_list.node_size)
 
 
 def reduce(unrolled_list: ImmutableUnrolledLinkedList,
-           func: Callable[[Num, Num], Num], initial_value: Num) -> Num:
+           func: Callable[[Num, Num],
+                          Num], initial_value: Optional[Num]) -> Optional[Num]:
     # Reduces the ImmutableUnrolledLinkedList to a single value
+    if not unrolled_list or unrolled_list.head_node is None:
+        return initial_value  # Return initial value if the list is empty
+
     state = initial_value
-    current_node = unrolled_list.head_node if unrolled_list else None
+    current_node = unrolled_list.head_node
 
     while current_node is not None:
         for value in current_node.elements:
             state = func(state, value)
         current_node = current_node.next_node
-    return state
+
+    return state  # Ensure a return value
 
 
 def empty(node_size: int = 4) -> ImmutableUnrolledLinkedList:
