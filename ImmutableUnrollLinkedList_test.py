@@ -27,7 +27,7 @@ def test_monoid_associativity(a: list, b: list, c: list):
 
 
 def test_IULL_api():
-    empty_list = ImmutableUnrolledLinkedList[Optional[int]]()
+    empty_list = ImmutableUnrolledLinkedList[int]()
     l1 = cons(None, cons(1, empty_list))
     l2 = cons(1, cons(None, empty_list))
 
