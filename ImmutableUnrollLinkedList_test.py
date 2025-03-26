@@ -5,6 +5,7 @@ from ImmutableUnrollLinkedList import from_list, empty, intersection
 from hypothesis import given
 import hypothesis.strategies as st
 
+
 @given(
     a=st.lists(st.integers() | st.none()),
     b=st.lists(st.integers() | st.none()),
@@ -24,8 +25,9 @@ def test_monoid_associativity(a: list, b: list, c: list):
     # 验证结果是否一致
     assert to_list(left) == to_list(right)
 
+
 def test_IULL_api():
-    empty_list = ImmutableUnrolledLinkedList()
+    empty_list = ImmutableUnrolledLinkedList[Optional[int]]()
     l1 = cons(None, cons(1, empty_list))
     l2 = cons(1, cons(None, empty_list))
 
