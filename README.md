@@ -69,9 +69,9 @@ programming and data integrity.
 ## Changelog
 
 - 26.03.2022 - 2
-  - Add test coverage.
-  - Update README.
+  -  Add test coverage.
+  -  Update README.
 - 25.03.2025 - 1
-  - Add formal sections.
+  -  Add formal sections.
 - 12.03.2025 - 0
-  - Initial
+  -  Initial
