@@ -282,7 +282,7 @@ def intersection(
 
 def to_list(unrolled_list: ImmutableUnrolledLinkedList) -> List[Num]:
     # Converts the ImmutableUnrolledLinkedList to a list
-    res = [Num]
+    res: List[Num] = []
     if not unrolled_list or unrolled_list.head_node is None:
         return res  # Return empty list if empty
 
