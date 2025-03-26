@@ -3,7 +3,7 @@ from typing import Optional, Tuple, List, Callable, TypeVar, Iterable
 
 class Node:
     """Node for Immutable Unrolled Linked List"""
-    Num = TypeVar('Num', int, float)
+    Num = TypeVar(int, float)
 
     def __init__(self,
                  elements: Optional[Iterable[Num]] = None,
@@ -17,7 +17,7 @@ class Node:
         self._next = next_node
 
     @property
-    def elements(self) -> Tuple[Num, ...]:
+    def elements(self) -> Tuple['Node.Num', ...]:
         # Returns the elements of the node as a tuple (immutable)
         return self._elements
 
@@ -43,7 +43,7 @@ class Node:
 
 class ImmutableUnrolledLinkedList:
     # Immutable Unrolled Linked List Data Structure
-    Num = TypeVar('Num', int, float)
+    Num = TypeVar(int, float)
 
     def __init__(self, head_node: Optional[Node] = None, node_size: int = 4):
 
@@ -90,7 +90,7 @@ class ImmutableUnrolledLinkedList:
 
 class ImmutableUnrolledLinkedListIterator:
     # Iterator for ImmutableUnrolledLinkedList
-    Num = TypeVar('Num', int, float)
+    Num = TypeVar(int, float)
 
     def __init__(self, unrolled_list: ImmutableUnrolledLinkedList):
         # Initialize the iterator with an UnrolledLinkedList
