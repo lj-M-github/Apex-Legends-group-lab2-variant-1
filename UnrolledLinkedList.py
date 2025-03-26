@@ -1,11 +1,15 @@
 from typing import Any, Callable, Optional, TypeVar, Generic
-from functools import reduce as functools_reduce
+# from functools import reduce as functools_reduce
 
 T = TypeVar('T')
 
+
 class ImmutableNode:
     __slots__ = ('elements', 'next', 'last')
-    def __init__(self, elements: tuple, next: Optional['ImmutableNode'] = None, 
+
+    def __init__(self,
+                 elements: tuple,
+                 next: Optional['ImmutableNode'] = None,
                  last: Optional['ImmutableNode'] = None):
         self.elements = elements  # 使用元组保证不可变性
         self.next = next
@@ -15,27 +19,31 @@ class ImmutableNode:
         return f"Node({self.elements})"
 
     def _replace(self, **kwargs):
-        return ImmutableNode(
-            elements=kwargs.get('elements', self.elements),
-            next=kwargs.get('next', self.next),
-            last=kwargs.get('last', self.last)
-        )
+        return ImmutableNode(elements=kwargs.get('elements', self.elements),
+                             next=kwargs.get('next', self.next),
+                             last=kwargs.get('last', self.last))
+
 
 class UnrolledLinkedList(Generic[T]):
     size = 4
 
-    def __init__(self, element_type: Optional[type] = None, size: int = 4,
-                 head: Optional[ImmutableNode] = None, current_node: Optional[ImmutableNode] = None,
-                 current_index: int = 0, length: int = 0):
+    def __init__(self,
+                 element_type: Optional[type] = None,
+                 size: int = 4,
+                 head: Optional[ImmutableNode] = None,
+                 current_node: Optional[ImmutableNode] = None,
+                 current_index: int = 0,
+                 length: int = 0):
         self.element_type = element_type
-        self.size = size if size is not None else self.__class__.size  # 修正size初始化
+        self.size = size if size is not None else self.__class__.size
         self.head = head
         self._current_node = current_node
         self._current_index = current_index
         self._length = length  # 缓存长度提升性能
 
     def _check_type(self, value: T):
-        if self.element_type is not None and not isinstance(value, self.element_type):
+        if self.element_type is not None and not isinstance(
+                value, self.element_type):
             raise TypeError(f"Expected {self.element_type}, got {type(value)}")
 
     @classmethod
@@ -46,50 +54,44 @@ class UnrolledLinkedList(Generic[T]):
         return self.head is None
 
     # ------------------- 核心递归方法 -------------------
-    def _cons_recursive(self, node: Optional[ImmutableNode], value: T, 
-                       remaining_size: int) -> ImmutableNode:
+    def _cons_recursive(self, node: Optional[ImmutableNode], value: T,
+                        remaining_size: int) -> ImmutableNode:
         if node is None or remaining_size <= 0:
-            return ImmutableNode((value,))
-        
+            return ImmutableNode((value, ))
+
         if len(node.elements) < self.size:
-            return node._replace(elements=(value,) + node.elements)
+            return node._replace(elements=(value, ) + node.elements)
         else:
             # 分割节点
             half = self.size // 2
-            new_elements = (value,) + node.elements[:half]
-            new_next = ImmutableNode(
-                elements=node.elements[half:],
-                next=node.next,
-                last=node
-            )
-            return ImmutableNode(
-                elements=new_elements,
-                next=self._cons_recursive(new_next, value, remaining_size - half)
-            )
+            new_elements = (value, ) + node.elements[:half]
+            new_next = ImmutableNode(elements=node.elements[half:],
+                                     next=node.next,
+                                     last=node)
+            return ImmutableNode(elements=new_elements,
+                                 next=self._cons_recursive(
+                                     new_next, value, remaining_size - half))
 
     def cons(self, value: T) -> 'UnrolledLinkedList[T]':
         self._check_type(value)
         if self.is_empty():
-            new_head = ImmutableNode((value,))
-            return UnrolledLinkedList(
-                element_type=self.element_type,
-                size=self.size,
-                head=new_head,
-                current_node=new_head,
-                current_index=1,
-                length=1
-            )
+            new_head = ImmutableNode((value, ))
+            return UnrolledLinkedList(element_type=self.element_type,
+                                      size=self.size,
+                                      head=new_head,
+                                      current_node=new_head,
+                                      current_index=1,
+                                      length=1)
         else:
             new_head = self._cons_recursive(self.head, value, self.size)
-            return UnrolledLinkedList(
-                element_type=self.element_type,
-                size=self.size,
-                head=new_head,
-                length=self._length + 1
-            )._rebalance()
+            return UnrolledLinkedList(element_type=self.element_type,
+                                      size=self.size,
+                                      head=new_head,
+                                      length=self._length + 1)._rebalance()
 
     # ------------------- 其他递归实现的方法 -------------------
-    def _remove_recursive(self, node: Optional[ImmutableNode], value: T) -> Optional[ImmutableNode]:
+    def _remove_recursive(self, node: Optional[ImmutableNode],
+                          value: T) -> Optional[ImmutableNode]:
         if node is None:
             return None
 
@@ -108,14 +110,16 @@ class UnrolledLinkedList(Generic[T]):
     def remove(self, value: T) -> 'UnrolledLinkedList[T]':
         new_head = self._remove_recursive(self.head, value)
         return UnrolledLinkedList(
-            element_type=self.element_type,
-            size=self.size,
-            head=new_head
-        )._rebalance()._recalculate_metadata()
+            element_type=self.element_type, size=self.size,
+            head=new_head)._rebalance()._recalculate_metadata()
 
     # ------------------- Monoid 实现 -------------------
-    def concat(self, other: 'UnrolledLinkedList[T]') -> 'UnrolledLinkedList[T]':
-        def _concat_nodes(a: Optional[ImmutableNode], b: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
+    def concat(self,
+               other: 'UnrolledLinkedList[T]') -> 'UnrolledLinkedList[T]':
+
+        def _concat_nodes(
+                a: Optional[ImmutableNode],
+                b: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
             if a is None:
                 return b
             if b is None:
@@ -124,15 +128,14 @@ class UnrolledLinkedList(Generic[T]):
 
         new_head = _concat_nodes(self.head, other.head)
         return UnrolledLinkedList(
-            element_type=self.element_type,
-            size=self.size,
-            head=new_head
-        )._rebalance()._recalculate_metadata()
+            element_type=self.element_type, size=self.size,
+            head=new_head)._rebalance()._recalculate_metadata()
 
     # ------------------- 工具方法 -------------------
     def _rebalance(self) -> 'UnrolledLinkedList[T]':
         # 重新平衡节点大小 (递归实现)
-        def rebalance_node(node: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
+        def rebalance_node(
+                node: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
             if node is None:
                 return None
 
@@ -141,21 +144,15 @@ class UnrolledLinkedList(Generic[T]):
                 half = len(node.elements) // 2
                 left = node.elements[:half]
                 right = node.elements[half:]
-                new_node = ImmutableNode(
-                    elements=right,
-                    next=rebalance_node(node.next)
-                )
-                return ImmutableNode(
-                    elements=left,
-                    next=new_node
-                )
-            elif node.next and len(node.elements) + len(node.next.elements) <= self.size:
+                new_node = ImmutableNode(elements=right,
+                                         next=rebalance_node(node.next))
+                return ImmutableNode(elements=left, next=new_node)
+            elif node.next and len(node.elements) + len(
+                    node.next.elements) <= self.size:
                 # 合并节点
                 merged = node.elements + node.next.elements
-                return ImmutableNode(
-                    elements=merged,
-                    next=rebalance_node(node.next.next)
-                )
+                return ImmutableNode(elements=merged,
+                                     next=rebalance_node(node.next.next))
             else:
                 return node._replace(next=rebalance_node(node.next))
 
@@ -164,7 +161,8 @@ class UnrolledLinkedList(Generic[T]):
     def _recalculate_metadata(self) -> 'UnrolledLinkedList[T]':
         # 递归计算长度和当前节点
         def calculate_length(node: Optional[ImmutableNode]) -> int:
-            return 0 if node is None else len(node.elements) + calculate_length(node.next)
+            return 0 if node is None else len(
+                node.elements) + calculate_length(node.next)
 
         new_length = calculate_length(self.head)
         return self._replace(length=new_length)
@@ -174,22 +172,28 @@ class UnrolledLinkedList(Generic[T]):
         return self._length
 
     def member(self, value: T) -> bool:
+
         def search(node: Optional[ImmutableNode]) -> bool:
             if node is None:
                 return False
             return value in node.elements or search(node.next)
+
         return search(self.head)
 
     def reverse(self) -> 'UnrolledLinkedList[T]':
-        def reverse_nodes(node: Optional[ImmutableNode], prev: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
+
+        def reverse_nodes(
+                node: Optional[ImmutableNode],
+                prev: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
             if node is None:
                 return prev
             next_node = node.next
-            return reverse_nodes(next_node, ImmutableNode(
-                elements=node.elements[::-1],
-                next=prev,
-                last=next_node
-            ))
+            return reverse_nodes(
+                next_node,
+                ImmutableNode(elements=node.elements[::-1],
+                              next=prev,
+                              last=next_node))
+
         return self._replace(head=reverse_nodes(self.head, None))
 
     # ------------------- Python特殊方法 -------------------
@@ -220,33 +224,33 @@ class UnrolledLinkedList(Generic[T]):
             head=kwargs.get('head', self.head),
             current_node=kwargs.get('current_node', self._current_node),
             current_index=kwargs.get('current_index', self._current_index),
-            length=kwargs.get('length', self._length)
-        )
+            length=kwargs.get('length', self._length))
 
     @classmethod
     def from_list(cls, lst: list) -> 'UnrolledLinkedList[T]':
+
         def build_nodes(elements: list, size: int) -> Optional[ImmutableNode]:
             if not elements:
                 return None
-            return ImmutableNode(
-                elements=tuple(elements[:size]),
-                next=build_nodes(elements[size:], size)
-            )
-        
-        return cls(
-            head=build_nodes(lst, cls.size),
-            length=len(lst)
-        )
+            return ImmutableNode(elements=tuple(elements[:size]),
+                                 next=build_nodes(elements[size:], size))
+
+        return cls(head=build_nodes(lst, cls.size), length=len(lst))
 
     def to_list(self) -> list:
+
         def collect(node: Optional[ImmutableNode], acc: list) -> list:
             if node is None:
                 return acc
             return collect(node.next, acc + list(node.elements))
+
         return collect(self.head, [])
-    
-    def filter(self, predicate: Callable[[T], bool]) -> 'UnrolledLinkedList[T]':
-        def _filter_node(node: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
+
+    def filter(self, predicate: Callable[[T],
+                                         bool]) -> 'UnrolledLinkedList[T]':
+
+        def _filter_node(
+                node: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
             if node is None:
                 return None
             # 先处理当前节点，再递归处理后续节点
@@ -255,33 +259,33 @@ class UnrolledLinkedList(Generic[T]):
             if not filtered:
                 return new_next  # 跳过当前空节点
             return ImmutableNode(elements=filtered, next=new_next)
-        
+
         new_head = _filter_node(self.head)
         return UnrolledLinkedList(
-            element_type=self.element_type,
-            size=self.size,
-            head=new_head
-        )._rebalance()._recalculate_metadata()
+            element_type=self.element_type, size=self.size,
+            head=new_head)._rebalance()._recalculate_metadata()
 
     def map(self, func: Callable[[T], Any]) -> 'UnrolledLinkedList[T]':
-        def _map_node(node: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
+
+        def _map_node(
+                node: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
             if node is None:
                 return None
             mapped = tuple(func(e) for e in node.elements)
-            return ImmutableNode(
-                elements=mapped,
-                next=_map_node(node.next)
-            )
+            return ImmutableNode(elements=mapped, next=_map_node(node.next))
+
         return self._replace(head=_map_node(self.head))
 
     @staticmethod
-    def reduce(lst: 'UnrolledLinkedList[T]', func: Callable[[Any, T], Any], initial: Any) -> Any:
+    def reduce(lst: 'UnrolledLinkedList[T]', func: Callable[[Any, T], Any],
+               initial: Any) -> Any:
         acc = initial
         for elem in lst:
             acc = func(acc, elem)
         return acc
-    
+
     def find(self, predicate: Callable[[T], bool]) -> Optional[T]:
+
         def _find(node: Optional[ImmutableNode]) -> Optional[T]:
             if node is None:
                 return None
@@ -289,14 +293,18 @@ class UnrolledLinkedList(Generic[T]):
                 if predicate(e):
                     return e
             return _find(node.next)
+
         return _find(self.head)
 
-    def intersection(self, other: 'UnrolledLinkedList[T]') -> 'UnrolledLinkedList[T]':
+    def intersection(
+            self, other: 'UnrolledLinkedList[T]') -> 'UnrolledLinkedList[T]':
         # 添加类型检查
-        if self.element_type is not None and other.element_type != self.element_type:
+        if (self.element_type is not None
+                and other.element_type != self.element_type):
             raise TypeError("Element type mismatch in intersection")
-        
-        def _intersect(node: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
+
+        def _intersect(
+                node: Optional[ImmutableNode]) -> Optional[ImmutableNode]:
             if node is None:
                 return None
             filtered = tuple(e for e in node.elements if other.member(e))
@@ -304,56 +312,69 @@ class UnrolledLinkedList(Generic[T]):
             if not filtered:
                 return new_next
             return ImmutableNode(elements=filtered, next=new_next)
-        
+
         new_head = _intersect(self.head)
         return UnrolledLinkedList(
-            head=new_head,
-            element_type=self.element_type,
-            size=self.size
-        )._rebalance()._recalculate_metadata()
-    
+            head=new_head, element_type=self.element_type,
+            size=self.size)._rebalance()._recalculate_metadata()
+
+
 # 函数式API包装
 def concat(a, b):
     return a.concat(b)
 
+
 def cons(value, lst):
     return lst.cons(value)
+
 
 def empty():
     return UnrolledLinkedList.empty()
 
+
 def from_list(lst):
     return UnrolledLinkedList.from_list(lst)
+
 
 def length(lst):
     return lst.length()
 
+
 def member(value, lst):
     return lst.member(value)
+
 
 def remove(lst, value):
     return lst.remove(value)
 
+
 def reverse(lst):
     return lst.reverse()
+
 
 def to_list(lst):
     return lst.to_list()
 
+
 def filter(lst, predicate):
     return lst.filter(predicate)
+
 
 def map_ull(lst, func):
     return lst.map(func)
 
+
 def reduce(lst, func, initial):
     return UnrolledLinkedList.reduce(lst, func, initial)
+
 
 def intersection(lst1, lst2):
     return lst1.intersection(lst2)
 
+
 def find(lst, predicate):
     return lst.find(predicate)
+
 
 __all__ = [
     'UnrolledLinkedList', 'concat', 'cons', 'empty', 'filter', 'from_list',
