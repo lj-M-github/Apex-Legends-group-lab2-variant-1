@@ -124,7 +124,7 @@ def cons(
     head_value: ImmutableUnrolledLinkedList.Num,
     unrolled_list: Optional[ImmutableUnrolledLinkedList] = None
 ) -> ImmutableUnrolledLinkedList:
-    #Adds a new element to the head of the ImmutableUnrolledLinkedList
+    # Adds a new element to the head of the ImmutableUnrolledLinkedList
     node_size = unrolled_list.node_size if unrolled_list else 4
 
     if not unrolled_list or unrolled_list.head_node is None:  # Empty list case
