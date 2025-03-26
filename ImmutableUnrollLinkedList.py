@@ -2,14 +2,18 @@ from typing import Optional, Tuple, List, Callable, TypeVar, Iterable
 
 
 class Node:
-    # Node for Immutable Unrolled Linked List
+    """Node for Immutable Unrolled Linked List"""
     Num = TypeVar('Num', int, float)
 
     def __init__(self,
                  elements: Optional[Iterable[Num]] = None,
                  next_node: Optional['Node'] = None):
+
         # Initialize an immutable node.
-        self._elements = tuple(elements) if elements is not None else tuple()
+
+        self._elements: Tuple[Node.Num, ...] = tuple(
+            elements) if elements is not None else tuple(
+            )  # Added type annotation
         self._next = next_node
 
     @property
@@ -42,7 +46,6 @@ class ImmutableUnrolledLinkedList:
     Num = TypeVar('Num', int, float)
 
     def __init__(self, head_node: Optional[Node] = None, node_size: int = 4):
-        # Initializes an ImmutableUnrolledLinkedList.
 
         if head_node is not None and not isinstance(head_node, Node):
             raise TypeError("head_node must be a Node or None")
@@ -70,7 +73,7 @@ class ImmutableUnrolledLinkedList:
         return str(self._head_node)
 
     def __eq__(self, other: object) -> bool:
-        # Equality check for UnrolledLinkedList objects
+        # Equality check for ImmutableUnrolledLinkedList objects
         if not isinstance(other, ImmutableUnrolledLinkedList):
             return False
 
@@ -78,21 +81,26 @@ class ImmutableUnrolledLinkedList:
         check_nodesize = (self._node_size == other._node_size)
         return check_headnode and check_nodesize
 
-    def __iter__(self):
+    def __iter__(
+        self
+    ) -> 'ImmutableUnrolledLinkedListIterator':  # Corrected return type hint
         # Makes the ImmutableUnrolledLinkedList iterable. Returns an iterator
-        return ImmutableUnrolledLinkedListIterator(
-            self)  # Return iterator class
+        return ImmutableUnrolledLinkedListIterator(self)
 
 
 class ImmutableUnrolledLinkedListIterator:
     # Iterator for ImmutableUnrolledLinkedList
+    Num = TypeVar('Num', int, float)
 
     def __init__(self, unrolled_list: ImmutableUnrolledLinkedList):
         # Initialize the iterator with an UnrolledLinkedList
-        self._current_node = unrolled_list.head_node
-        self._current_element_index = 0
+        self._current_node: Optional[
+            Node] = unrolled_list.head_node  # Added type annotation
+        self._current_element_index: int = 0  # Added type annotation
 
-    def __iter__(self):
+    def __iter__(
+        self
+    ) -> 'ImmutableUnrolledLinkedListIterator':  # Corrected return type hint
         # Returns the iterator object itself (for iter(iterator))
         return self
 
@@ -116,7 +124,7 @@ def cons(
     head_value: ImmutableUnrolledLinkedList.Num,
     unrolled_list: Optional[ImmutableUnrolledLinkedList] = None
 ) -> ImmutableUnrolledLinkedList:
-    # Adds a new element to the head of the ImmutableUnrolledLinkedList
+    #Adds a new element to the head of the ImmutableUnrolledLinkedList
     node_size = unrolled_list.node_size if unrolled_list else 4
 
     if not unrolled_list or unrolled_list.head_node is None:  # Empty list case
@@ -165,7 +173,8 @@ def remove(
             remaining_elements = current_elements[:removed_index] + \
                 current_elements[removed_index+1:]
             if remaining_elements:  # Node still has elements
-                return Node(remaining_elements, current_node.next_node)
+                return Node(tuple(remaining_elements), current_node.next_node
+                            )  # Corrected Node creation with tuple
             else:  # Node becomes empty, skip this node
                 # Return the rest of the list (tail)
                 return current_node.next_node
@@ -230,11 +239,12 @@ def reverse(
         if current_node is None:
             return accumulated_list
 
-        reversed_current_node_values = reversed(
-            current_node.elements)  # Reverse elements in current node
+        reversed_current_node_values = current_node.elements[::
+                                                             -1]  # Corrected reverse with slicing
         # Create node from reversed values
-        reversed_node = from_list(list(reversed_current_node_values),
-                                  unrolled_list.node_size).head_node
+        reversed_node = Node(
+            reversed_current_node_values,  # Corrected Node creation with tuple
+            unrolled_list.node_size).head_node
 
         # Prepend reversed node
         return _reverse_recursive(
@@ -259,7 +269,8 @@ def intersection(
             None, unrolled_list1.node_size
             if unrolled_list1 else unrolled_list2.node_size)
 
-    intersection_values = []
+    intersection_values: List[ImmutableUnrolledLinkedList.Num] = [
+    ]  # Added type annotation
 
     def _intersection_recursive(current_node: Optional[Node]):
         nonlocal intersection_values  # Allow modifying outer variable
@@ -304,13 +315,15 @@ def from_list(python_list: List[ImmutableUnrolledLinkedList.Num],
         return ImmutableUnrolledLinkedList(None, node_size)
 
     head_node = None
-    current_node_values = []
+    current_node_values: List[ImmutableUnrolledLinkedList.Num] = [
+    ]  # Added type annotation
     current_node_pointer = None
 
     for item in python_list:
         current_node_values.append(item)
         if len(current_node_values) == node_size:
-            new_node = Node(current_node_values, None)
+            new_node = Node(tuple(current_node_values),
+                            None)  # Corrected Node creation with tuple
             if head_node is None:
                 head_node = new_node
                 current_node_pointer = head_node
@@ -320,7 +333,8 @@ def from_list(python_list: List[ImmutableUnrolledLinkedList.Num],
             current_node_values = []
 
     if current_node_values:  # Remaining elements
-        new_node = Node(current_node_values, None)
+        new_node = Node(tuple(current_node_values),
+                        None)  # Corrected Node creation with tuple
         if head_node is None:
             head_node = new_node
         else:
@@ -362,7 +376,8 @@ def filter(
     if not unrolled_list or unrolled_list.head_node is None:
         return unrolled_list  # Return original empty list if empty
 
-    filtered_values = []
+    filtered_values: List[ImmutableUnrolledLinkedList.Num] = [
+    ]  # Added type annotation
 
     def _filter_recursive(current_node: Optional[Node]):
         nonlocal filtered_values
