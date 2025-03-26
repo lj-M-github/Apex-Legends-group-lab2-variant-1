@@ -419,7 +419,10 @@ def reduce(unrolled_list: ImmutableUnrolledLinkedList,
 
     while current_node is not None:
         for value in current_node.elements:
-            state = func(state, value)
+            if state is None:  # Handle None case
+                state = value  # If state is None, set it to the first element
+            else:
+                state = func(state, value)
         current_node = current_node.next_node
 
     return state  # Ensure a return value
