@@ -1,5 +1,7 @@
 from typing import Optional, Tuple, List, Callable, TypeVar, Iterable
 
+Num = TypeVar('Num', int, float)
+
 
 class Node:
     """Node for Immutable Unrolled Linked List"""
@@ -11,13 +13,13 @@ class Node:
 
         # Initialize an immutable node.
 
-        self._elements: Tuple[Node.Num, ...] = tuple(
+        self._elements: Tuple[Num, ...] = tuple(
             elements) if elements is not None else tuple(
             )  # Added type annotation
         self._next = next_node
 
     @property
-    def elements(self) -> Tuple['Node.Num', ...]:
+    def elements(self) -> Tuple[Num, ...]:
         # Returns the elements of the node as a tuple (immutable)
         return self._elements
 
@@ -104,7 +106,7 @@ class ImmutableUnrolledLinkedListIterator:
         # Returns the iterator object itself (for iter(iterator))
         return self
 
-    def __next__(self) -> Optional[ImmutableUnrolledLinkedList.Num]:
+    def __next__(self) -> Optional[Num]:
         # Returns the next element in the ImmutableUnrolledLinkedList
         if self._current_node is None:
             raise StopIteration
