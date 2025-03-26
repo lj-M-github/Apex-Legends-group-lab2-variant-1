@@ -230,7 +230,7 @@ def member(unrolled_list: ImmutableUnrolledLinkedList,
 def reverse(
         unrolled_list: ImmutableUnrolledLinkedList
 ) -> ImmutableUnrolledLinkedList:
-    # Reverses the ImmutableUnrolledLinkedList
+    """Reverses the ImmutableUnrolledLinkedList."""
     if not unrolled_list or unrolled_list.head_node is None:
         return unrolled_list  # Return original empty list if empty
 
@@ -239,17 +239,16 @@ def reverse(
         if current_node is None:
             return accumulated_list
 
-        reversed_current_node_values = current_node.elements[::
-                                                             -1]  # Corrected reverse with slicing
-        # Create node from reversed values
-        reversed_node = Node(
-            reversed_current_node_values,  # Corrected Node creation with tuple
-            unrolled_list.node_size).head_node
+        reversed_current_node_values = reversed(
+            current_node.elements)  # Reverse elements in current node
+        reversed_node = from_list(
+            list(reversed_current_node_values), unrolled_list.node_size
+        ).head_node  # Create node from reversed values
 
-        # Prepend reversed node
         return _reverse_recursive(
             current_node.next_node,
-            concat_nodes(reversed_node, accumulated_list))
+            concat_nodes(reversed_node,
+                         accumulated_list))  # Prepend reversed node
 
     reversed_head_node = _reverse_recursive(unrolled_list.head_node, None)
     return ImmutableUnrolledLinkedList(reversed_head_node,
