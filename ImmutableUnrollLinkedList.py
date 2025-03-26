@@ -1,6 +1,7 @@
 from typing import Optional, Tuple, List, Callable, TypeVar, Iterable, Generic
 
 Num = TypeVar('Num', int, float, None)
+Num1 = TypeVar('Num1', int, float)
 
 
 class Node(Generic[Num]):
@@ -383,7 +384,7 @@ def filter(unrolled_list: ImmutableUnrolledLinkedList,
 
 
 def map_list(unrolled_list: ImmutableUnrolledLinkedList[Num],
-             func: Callable[[Num], Num]) -> ImmutableUnrolledLinkedList:
+             func: Callable[[Num1], Num1]) -> ImmutableUnrolledLinkedList:
     # Maps a function over the ImmutableUnrolledLinkedList
     if not unrolled_list or unrolled_list.head_node is None:
         return unrolled_list  # Return original empty list if empty
@@ -409,15 +410,15 @@ def map_list(unrolled_list: ImmutableUnrolledLinkedList[Num],
                                        unrolled_list.node_size)
 
 
-def reduce(unrolled_list: ImmutableUnrolledLinkedList[Num],
-           func: Callable[[Num, Num],
-                          Num], initial_value: Optional[Num]) -> Optional[Num]:
+def reduce(unrolled_list: ImmutableUnrolledLinkedList[Num1],
+           func: Callable[[Num1, Num1], Num1],
+           initial_value: Optional[Num1]) -> Optional[Num1]:
     # Reduces the ImmutableUnrolledLinkedList to a single value
     if not unrolled_list or unrolled_list.head_node is None:
         return initial_value  # Return initial value if the list is empty
 
     state = initial_value
-    current_node = unrolled_list.head_node
+    current_node: Optional[Node] = unrolled_list.head_node
 
     while current_node is not None:
         for value in current_node.elements:
