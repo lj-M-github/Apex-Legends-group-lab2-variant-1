@@ -28,7 +28,7 @@ def test_cons():
     empty_list = ImmutableUnrolledLinkedList[int]()
     l1 = cons(None, cons(1, empty_list))
     l2 = cons(1, cons(None, empty_list))
-    
+
     assert str(empty_list) == "[]"
     assert str(l1) == "[None, 1]"
     assert str(l2) == "[1, None]"
@@ -41,7 +41,7 @@ def test_cons():
 def test_remove():
     empty_list = ImmutableUnrolledLinkedList[int]()
     l1 = cons(None, cons(1, empty_list))
-    
+
     assert str(remove(l1, None)) == "[1]"
     assert str(remove(l1, 1)) == "[None]"
 
@@ -49,7 +49,7 @@ def test_remove():
 def test_length():
     empty_list = ImmutableUnrolledLinkedList[int]()
     l1 = cons(None, cons(1, empty_list))
-    
+
     assert length(empty_list) == 0
     assert length(l1) == 2
 
@@ -57,7 +57,7 @@ def test_length():
 def test_member():
     empty_list = ImmutableUnrolledLinkedList[int]()
     l1 = cons(None, cons(1, empty_list))
-    
+
     assert not member(empty_list, None)
     assert member(l1, None)
     assert member(l1, 1)
@@ -67,7 +67,6 @@ def test_member():
 def test_to_list():
     empty_list = ImmutableUnrolledLinkedList[int]()
     l1 = cons(None, cons(1, empty_list))
-    
     assert to_list(empty_list) == []
     assert to_list(l1) == [None, 1]
 
@@ -82,7 +81,7 @@ def test_reverse():
     empty_list = ImmutableUnrolledLinkedList[int]()
     l1 = cons(None, cons(1, empty_list))
     l2 = cons(1, cons(None, empty_list))
-    
+
     assert reverse(empty_list) == empty_list
     assert reverse(l1) == l2
     assert reverse(l2) == l1
@@ -92,7 +91,7 @@ def test_concat():
     empty_list = ImmutableUnrolledLinkedList[int]()
     l1 = cons(None, cons(1, empty_list))
     l2 = cons(1, cons(None, empty_list))
-    
+
     assert concat(empty_list, empty_list) == empty_list
     assert concat(l1, empty_list) == l1
     assert concat(empty_list, l1) == l1
@@ -158,12 +157,12 @@ def test_empty():
 def test_find():
     test_list = from_list([1, 2, 3, 4])
     assert find(test_list, lambda x: x % 2 == 0) == 2
-    
+
     list_with_none = from_list([1, None, 3])
     assert find(list_with_none, lambda x: x is None) is None
-    
+
     assert find(test_list, lambda x: x > 10) is None
-    
+
     empty_list = ImmutableUnrolledLinkedList[int]()
     assert find(empty_list, lambda x: x > 0) is None
 
@@ -172,12 +171,12 @@ def test_intersection():
     list1 = from_list([1, 2, 3, 4])
     list2 = from_list([3, 4, 5, 6])
     assert to_list(intersection(list1, list2)) == [3, 4]
-    
+
     list3 = from_list([7, 8, 9])
     assert to_list(intersection(list1, list3)) == []
-    
+
     assert to_list(intersection(list1, list1)) == to_list(list1)
-    
+
     empty_list = ImmutableUnrolledLinkedList[int]()
     assert to_list(intersection(list1, empty_list)) == []
     assert to_list(intersection(empty_list, empty_list)) == []
