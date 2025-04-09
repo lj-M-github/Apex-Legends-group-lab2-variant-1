@@ -1,4 +1,4 @@
-# Apex-Legends - lab 1 - variant 1
+# Apex-Legends - lab 2 - variant 1
 
 This project demonstrates the implementation of Immutable Unrolled
 Linked List in Python and explores the concept of immutable data
