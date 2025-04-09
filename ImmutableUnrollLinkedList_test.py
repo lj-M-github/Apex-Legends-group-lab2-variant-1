@@ -42,7 +42,7 @@ class TestImmutableUnrollLinkedList(unittest.TestCase):
         self.assertEqual(str(remove(l1, None)), "[1]")
         self.assertEqual(str(remove(l1, 1)), "[None]")
 
-    def test_length (self) -> None:
+    def test_length(self) -> None:
         empty_list = ImmutableUnrolledLinkedList[int]()
         l1 = cons(None, cons(1, empty_list))
 
