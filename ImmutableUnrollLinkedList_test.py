@@ -180,6 +180,3 @@ def test_intersection():
     empty_list = ImmutableUnrolledLinkedList[int]()
     assert to_list(intersection(list1, empty_list)) == []
     assert to_list(intersection(empty_list, empty_list)) == []
-
-
-if __name__ == '__main__':
