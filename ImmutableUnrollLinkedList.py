@@ -9,17 +9,17 @@ class Node(Generic[T]):
 
     def __init__(self,
                  elements: Optional[Iterable[T]] = None,
-                 next_node: Optional['Node'] = None):
+                 next_node: Optional['Node[T]'] = None):
 
         # Initialize an immutable node.
 
         self._elements: Tuple[T, ...] = tuple(
             elements) if elements is not None else tuple(
             )  # Added type annotation
-        self._next = next_node
+        self._next: Optional[Node[T]] = next_node
 
     @property
-    def elements(self) -> Tuple[T, ...]:
+    def elements(self) -> Optional['Node[T]']:
         # Returns the elements of the node as a tuple (immutable)
         return self._elements
 
@@ -92,10 +92,10 @@ class ImmutableUnrolledLinkedList(Generic[T]):
 class ImmutableUnrolledLinkedListIterator(Generic[T]):
     # Iterator for ImmutableUnrolledLinkedList
 
-    def __init__(self, unrolled_list: ImmutableUnrolledLinkedList):
+    def __init__(self, unrolled_list: ImmutableUnrolledLinkedList[T]):
         # Initialize the iterator with an UnrolledLinkedList
         self._current_node: Optional[
-            Node] = unrolled_list.head_node  # Added type annotation
+            Node[T]] = unrolled_list.head_node  # Added type annotation
         self._current_element_index: int = 0  # Added type annotation
 
     def __iter__(
