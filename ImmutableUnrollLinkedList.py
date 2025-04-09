@@ -265,7 +265,6 @@ def intersection(
     intersection_values: List[T] = []  # Added type annotation
 
     def _intersection_recursive(current_node: Optional[Node]):
-        nonlocal intersection_values  # Allow modifying outer variable
         if current_node is None:
             return
 
@@ -288,7 +287,6 @@ def to_list(unrolled_list: ImmutableUnrolledLinkedList) -> List[T]:
         return res  # Return empty list if empty
 
     def _to_list_recursive(current_node: Optional[Node]):
-        nonlocal res
         if current_node is None:
             return
         res.extend(list(current_node.elements))
@@ -365,7 +363,6 @@ def filter(unrolled_list: ImmutableUnrolledLinkedList,
     filtered_values: List[T] = []  # Added type annotation
 
     def _filter_recursive(current_node: Optional[Node]):
-        nonlocal filtered_values
         if current_node is None:
             return  # Base case: end of list
 
