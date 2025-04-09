@@ -31,7 +31,7 @@ jobs:
 
       # type annotation checks
       - name: Type checks
-        run: mypy .
+        run: mypy . --strict
 
       # if you pretend to make a typed version of your program, you should uncomment these lines:  
       # - name: Strict type checks 
