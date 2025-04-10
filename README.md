@@ -68,7 +68,9 @@ programming and data integrity.
 
 ## Changelog
 
-- 26.03.2022 - 2
+- 10.04.2025 - 0
+   - pass mypy strict type checking.
+- 26.03.2025 - 2
    - Add test coverage.
    - Update README.
 - 25.03.2025 - 1
