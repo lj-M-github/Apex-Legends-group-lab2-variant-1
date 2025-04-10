@@ -334,23 +334,30 @@ def from_list(python_list: List[T],
     return ImmutableUnrolledLinkedList[T](head_node, node_size)
 
 
-def find(unrolled_list: 'ImmutableUnrolledLinkedList[T]',
-         predicate: Callable[[T], bool]) -> Optional[T]:
+def find(
+    unrolled_list: 'ImmutableUnrolledLinkedList[T]', predicate: Callable[[T],
+                                                                         bool]
+) -> Tuple[bool, Optional[T]]:  # Changed return type
     # Finds the first element that satisfies the predicate in the IULL
+    # Returns a tuple: (found: bool, value: Optional[T])
     if not unrolled_list or unrolled_list.head_node is None:
-        return None
+        return False, None  # Indicate not found
 
-    def _find_recursive(current_node: Optional['Node[T]'],
-                        predicate_func: Callable[[T], bool]) -> Optional[T]:
+    def _find_recursive(
+        current_node: Optional['Node[T]'], predicate_func: Callable[[T], bool]
+    ) -> Tuple[bool,
+               Optional[T]]:  # Changed return type for recursive function
         if current_node is None:
-            return None
+            return False, None  # Base case: Not found in this branch
 
         for value in current_node.elements:
             if predicate_func(value):
-                return value  # Found element
+                return True, value  # Found element, return (True, element)
 
         # Recurse if not found in current node
-        return _find_recursive(current_node.next_node, predicate_func)
+        return _find_recursive(
+            current_node.next_node,
+            predicate_func)  # Propagate result from recursive call
 
     return _find_recursive(unrolled_list.head_node, predicate)
 

@@ -164,17 +164,18 @@ class TestImmutableUnrollLinkedList(unittest.TestCase):
 
     def test_find(self) -> None:
         test_list: ImmutableUnrolledLinkedList[int] = from_list([1, 2, 3, 4])
-        self.assertEqual(find(test_list, lambda x: x % 2 == 0), 2)
+        self.assertEqual(find(test_list, lambda x: x % 2 == 0), (True, 2))
 
         list_with_none: ImmutableUnrolledLinkedList[Optional[int]] = from_list(
             [1, None, 3])
-        self.assertEqual(find(list_with_none, lambda x: x is None), 2)
+        self.assertEqual(find(list_with_none, lambda x: x is None),
+                         (True, None))
 
-        self.assertEqual(find(list_with_none, lambda x: x > 10), None)
+        self.assertEqual(find(list_with_none, lambda x: x > 10), (False, None))
 
         empty_list: ImmutableUnrolledLinkedList[
             int] = ImmutableUnrolledLinkedList[int]()
-        self.assertEqual(find(empty_list, lambda x: x > 0), None)
+        self.assertEqual(find(empty_list, lambda x: x > 0), (False, None))
 
     def test_intersection(self) -> None:
         list1: ImmutableUnrolledLinkedList[int] = from_list([1, 2, 3, 4])
