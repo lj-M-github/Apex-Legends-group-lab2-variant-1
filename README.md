@@ -23,7 +23,7 @@ structures and the unrolled linked list variation.
 The following function-style API functions are implemented for the
 ImmutableUnrolledLinkedList (ul means unrolled_list):
 
-- `cons(head_value, l1=None)`: Adds a new element to the beginning
+- `cons(head_value, ul=None)`: Adds a new element to the beginning
   (head) of the list, returning a new list.
 - `remove(ul, element)`: Returns a new list with the first occurrence
   of the specified element removed.
@@ -37,6 +37,9 @@ ImmutableUnrolledLinkedList (ul means unrolled_list):
   standard Python list.
 - `from_list(list, node_size)`: Creates a new Immutable Unrolled
   Linked List from a standard Python list, with node size specified.
+- `find(ul, predicate)`: Finds the first element in the list that satisfies
+  the given predicate function and returns it.
+  (tuple(False, None) if not found or tuple(True, Optional[T])).
 - `filter(ul, predicate)`: Returns a new list containing only elements
   that satisfy the given predicate function.
 - `map_list(ul, func)`: Returns a new list by applying the given function
