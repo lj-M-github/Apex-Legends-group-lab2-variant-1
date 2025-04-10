@@ -171,7 +171,9 @@ class TestImmutableUnrollLinkedList(unittest.TestCase):
         self.assertEqual(find(list_with_none, lambda x: x is None),
                          (True, None))
 
-        self.assertEqual(find(list_with_none, lambda x: x > 10), (False, None))
+        self.assertEqual(
+            find(list_with_none, lambda x: x is not None and x > 10),
+            (False, None))
 
         empty_list: ImmutableUnrolledLinkedList[
             int] = ImmutableUnrolledLinkedList[int]()
