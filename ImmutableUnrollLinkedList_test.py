@@ -5,7 +5,7 @@ from ImmutableUnrollLinkedList import (ImmutableUnrolledLinkedList, cons,
 from hypothesis import given
 import hypothesis.strategies as st
 import unittest
-from typing import List, Any, Optional, Callable, TypeVar, cast
+from typing import List, Any, Optional, TypeVar
 
 T = TypeVar('T')
 
