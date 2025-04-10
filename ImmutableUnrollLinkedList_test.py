@@ -33,9 +33,9 @@ class TestImmutableUnrollLinkedList(unittest.TestCase):
         empty_list: ImmutableUnrolledLinkedList[
             Optional[int]] = ImmutableUnrolledLinkedList[Optional[int]]()
         l1: ImmutableUnrolledLinkedList[Optional[int]] = cons(
-            None, cons(1, empty_list))  # type: ignore[misc]
+            None, cons(1, empty_list))
         l2: ImmutableUnrolledLinkedList[Optional[int]] = cons(
-            1, cons(None, empty_list))  # type: ignore[misc]
+            1, cons(None, empty_list))
 
         self.assertEqual(str(empty_list), "[]")
         self.assertEqual(str(l1), "[None, 1]")
@@ -43,14 +43,13 @@ class TestImmutableUnrollLinkedList(unittest.TestCase):
         self.assertNotEqual(empty_list, l1)
         self.assertNotEqual(empty_list, l2)
         self.assertNotEqual(l1, l2)
-        self.assertEqual(l1, cons(None,
-                                  cons(1, empty_list)))  # type: ignore[misc]
+        self.assertEqual(l1, cons(None, cons(1, empty_list)))
 
     def test_remove(self) -> None:
         empty_list: ImmutableUnrolledLinkedList[
             Optional[int]] = ImmutableUnrolledLinkedList[Optional[int]]()
         l1: ImmutableUnrolledLinkedList[Optional[int]] = cons(
-            None, cons(1, empty_list))  # type: ignore[misc]
+            None, cons(1, empty_list))
 
         self.assertEqual(str(remove(l1, None)), "[1]")
         self.assertEqual(str(remove(l1, 1)), "[None]")
@@ -59,7 +58,7 @@ class TestImmutableUnrollLinkedList(unittest.TestCase):
         empty_list: ImmutableUnrolledLinkedList[
             Optional[int]] = ImmutableUnrolledLinkedList[Optional[int]]()
         l1: ImmutableUnrolledLinkedList[Optional[int]] = cons(
-            None, cons(1, empty_list))  # type: ignore[misc]
+            None, cons(1, empty_list))
 
         self.assertEqual(length(empty_list), 0)
         self.assertEqual(length(l1), 2)
@@ -68,7 +67,7 @@ class TestImmutableUnrollLinkedList(unittest.TestCase):
         empty_list: ImmutableUnrolledLinkedList[
             Optional[int]] = ImmutableUnrolledLinkedList[Optional[int]]()
         l1: ImmutableUnrolledLinkedList[Optional[int]] = cons(
-            None, cons(1, empty_list))  # type: ignore[misc]
+            None, cons(1, empty_list))
 
         self.assertFalse(member(empty_list, None))
         self.assertTrue(member(l1, None))
@@ -79,7 +78,7 @@ class TestImmutableUnrollLinkedList(unittest.TestCase):
         empty_list: ImmutableUnrolledLinkedList[
             Optional[int]] = ImmutableUnrolledLinkedList[Optional[int]]()
         l1: ImmutableUnrolledLinkedList[Optional[int]] = cons(
-            None, cons(1, empty_list))  # type: ignore[misc]
+            None, cons(1, empty_list))
 
         self.assertEqual(to_list(empty_list), [])
         self.assertEqual(to_list(l1), [None, 1])
@@ -94,9 +93,9 @@ class TestImmutableUnrollLinkedList(unittest.TestCase):
         empty_list: ImmutableUnrolledLinkedList[
             Optional[int]] = ImmutableUnrolledLinkedList[Optional[int]]()
         l1: ImmutableUnrolledLinkedList[Optional[int]] = cons(
-            None, cons(1, empty_list))  # type: ignore[misc]
+            None, cons(1, empty_list))
         l2: ImmutableUnrolledLinkedList[Optional[int]] = cons(
-            1, cons(None, empty_list))  # type: ignore[misc]
+            1, cons(None, empty_list))
 
         self.assertEqual(reverse(empty_list), empty_list)
         self.assertEqual(reverse(l1), l2)
@@ -106,9 +105,9 @@ class TestImmutableUnrollLinkedList(unittest.TestCase):
         empty_list: ImmutableUnrolledLinkedList[
             Optional[int]] = ImmutableUnrolledLinkedList[Optional[int]]()
         l1: ImmutableUnrolledLinkedList[Optional[int]] = cons(
-            None, cons(1, empty_list))  # type: ignore[misc]
+            None, cons(1, empty_list))
         l2: ImmutableUnrolledLinkedList[Optional[int]] = cons(
-            1, cons(None, empty_list))  # type: ignore[misc]
+            1, cons(None, empty_list))
 
         self.assertEqual(concat(empty_list, empty_list), empty_list)
         self.assertEqual(concat(l1, empty_list), l1)
