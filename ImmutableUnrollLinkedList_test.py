@@ -194,8 +194,9 @@ class TestImmutableUnrollLinkedList(unittest.TestCase):
         self.assertEqual(to_list(intersection(empty_list, empty_list)), [])
 
 
-def test_IULL_api():
-    empty_list = ImmutableUnrolledLinkedList()
+def test_IULL_api() -> None:
+    empty_list: ImmutableUnrolledLinkedList[
+        Optional[int]] = ImmutableUnrolledLinkedList()
     l1 = cons(None, cons(1, empty_list))
     l2 = cons(1, cons(None, empty_list))
 
@@ -230,7 +231,8 @@ def test_IULL_api():
     assert to_list(l2) == [1, None]
 
     # from_list
-    test_data = [[], [1], [2, 3], [1, 2, 3], [None, 1]]
+    test_data: List[List[Optional[int]]] = [[], [1], [2, 3], [1, 2, 3],
+                                            [None, 1]]
     for e in test_data:
         assert to_list(from_list(e)) == e
 

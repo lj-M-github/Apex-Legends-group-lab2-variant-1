@@ -301,7 +301,7 @@ def to_list(unrolled_list: 'ImmutableUnrolledLinkedList[T]') -> List[T]:
 
 
 def from_list(python_list: List[T],
-              node_size: int = 4) -> 'ImmutableUnrolledLinkedList[T]':
+              node_size: int = 4) -> ImmutableUnrolledLinkedList[T]:
     # Creates an ImmutableUnrolledLinkedList from a list
     if not python_list:
         return ImmutableUnrolledLinkedList[T](None, node_size)
