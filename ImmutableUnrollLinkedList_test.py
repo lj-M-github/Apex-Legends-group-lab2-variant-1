@@ -196,7 +196,9 @@ class TestImmutableUnrollLinkedList(unittest.TestCase):
 
 def test_IULL_api() -> None:
     empty_list: ImmutableUnrolledLinkedList[
-        Optional[int]] = ImmutableUnrolledLinkedList()
+        Optional[int]] = ImmutableUnrolledLinkedList[Optional[int]]()
+    empty_list_int: ImmutableUnrolledLinkedList[
+        int] = ImmutableUnrolledLinkedList[int]()
     l1 = cons(None, cons(1, empty_list))
     l2 = cons(1, cons(None, empty_list))
 
@@ -250,14 +252,10 @@ def test_IULL_api() -> None:
     assert concat(l1, l2) == from_list([None, 1, 1, None])
 
     # iter
-    x = [1, 2, 3]
-    lst = from_list(x, node_size=2)
-
-    tmp = []
-    for e in lst:
-        tmp.append(e)
-    assert x == tmp
-    assert to_list(lst) == tmp
+    x: List[int] = [1, 2, 3]
+    lst: ImmutableUnrolledLinkedList[int] = from_list(x, node_size=2)
+    assert [e for e in lst] == x
+    assert to_list(lst) == x
 
     list_iterator = iter(empty_list)
     try:
@@ -271,8 +269,7 @@ def test_IULL_api() -> None:
     filtered_list = filter(test_list, lambda x: x % 2 == 0)
     assert to_list(filtered_list) == [2, 4]
 
-    empty_filtered_list = filter(empty_list, lambda x: x > 0)
-    assert to_list(empty_filtered_list) == []
+    assert to_list(filter(empty_list_int, lambda x: x > 0)) == []
 
     # map_list
     test_list = from_list([1, 2, 3])
@@ -280,8 +277,8 @@ def test_IULL_api() -> None:
     mapped_list = map_list(test_list, lambda x: x * 2)
     assert to_list(mapped_list) == [2, 4, 6]
     # Map function: x + 1
-    empty_mapped_list = map_list(empty_list, lambda x: x + 1)
-    assert to_list(empty_mapped_list) == []
+
+    assert to_list(map_list(empty_list_int, lambda x: x + 1)) == []
 
     # reduce
     test_list = from_list([1, 2, 3, 4])
@@ -289,11 +286,12 @@ def test_IULL_api() -> None:
     sum_result = reduce(test_list, lambda acc, x: acc + x, 0)
     assert sum_result == 10
 
-    empty_reduce_result = reduce(empty_list, lambda acc, x: acc + x, 0)
+    empty_reduce_result = reduce(empty_list_int, lambda acc, x: acc + x, 0)
     assert empty_reduce_result == 0
 
     # empty
-    empty_list_test = empty(node_size=3)  # Create empty list with node_size 3
+    empty_list_test: ImmutableUnrolledLinkedList[int] = empty(
+        node_size=3)  # Create empty list with node_size 3
     assert empty_list_test.head_node is None
     assert empty_list_test.node_size == 3
     assert length(empty_list_test) == 0
@@ -313,7 +311,7 @@ def test_IULL_api() -> None:
     assert not_found_element == (False, None)
 
     # Find in empty list
-    empty_find_result = find(empty_list, lambda x: x > 0)
+    empty_find_result = find(empty_list_int, lambda x: x > 0)
     assert empty_find_result == (False, None)
 
     # intersection
@@ -333,7 +331,7 @@ def test_IULL_api() -> None:
     assert to_list(same_list_intersection) == to_list(list1)
 
     # Intersection with empty list is empty
-    list_empty_intersection = intersection(list1, empty_list)
+    list_empty_intersection = intersection(list1, empty_list_int)
     assert to_list(list_empty_intersection) == []
 
     # Intersection of two empty lists is empty

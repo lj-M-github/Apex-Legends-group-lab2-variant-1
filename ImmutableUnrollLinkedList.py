@@ -362,7 +362,7 @@ def find(
     return _find_recursive(unrolled_list.head_node, predicate)
 
 
-def filter(unrolled_list: 'ImmutableUnrolledLinkedList[T]',
+def filter(unrolled_list: ImmutableUnrolledLinkedList[T],
            predicate: Callable[[T], bool]) -> 'ImmutableUnrolledLinkedList[T]':
     # Filters the ImmutableUnrolledLinkedList based on a predicate
     if not unrolled_list or unrolled_list.head_node is None:
@@ -388,8 +388,8 @@ def filter(unrolled_list: 'ImmutableUnrolledLinkedList[T]',
                                           unrolled_list.node_size)
 
 
-def map_list(unrolled_list: 'ImmutableUnrolledLinkedList[T]',
-             func: Callable[[T], U]) -> 'ImmutableUnrolledLinkedList[U]':
+def map_list(unrolled_list: ImmutableUnrolledLinkedList[T],
+             func: Callable[[T], U]) -> ImmutableUnrolledLinkedList[U]:
     # Maps a function over the ImmutableUnrolledLinkedList
     if not unrolled_list or unrolled_list.head_node is None:
         return ImmutableUnrolledLinkedList[U]()
@@ -417,7 +417,7 @@ def map_list(unrolled_list: 'ImmutableUnrolledLinkedList[T]',
                                           unrolled_list.node_size)
 
 
-def reduce(unrolled_list: 'ImmutableUnrolledLinkedList[U]',
+def reduce(unrolled_list: ImmutableUnrolledLinkedList[U],
            func: Callable[[U, U],
                           U], initial_value: Optional[U]) -> Optional[U]:
     # Reduces the ImmutableUnrolledLinkedList to a single value
