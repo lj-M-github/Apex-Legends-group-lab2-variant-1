@@ -300,19 +300,19 @@ def test_IULL_api():
     # find
     test_list = from_list([1, 2, 3, 4])
     found_element = find(test_list, lambda x: x % 2 == 0)
-    assert found_element == 2
+    assert found_element == (True, 2)
     # Find None in a list with None
     list_with_none = from_list([1, None, 3])
     found_none = find(list_with_none, lambda x: x is None)
-    assert found_none is None
+    assert found_none == (False, None)
 
     # Element not found
     not_found_element = find(test_list, lambda x: x > 10)
-    assert not_found_element is None
+    assert not_found_element == (False, None)
 
     # Find in empty list
     empty_find_result = find(empty_list, lambda x: x > 0)
-    assert empty_find_result is None
+    assert empty_find_result == (False, None)
 
     # intersection
     list1 = from_list([1, 2, 3, 4])
