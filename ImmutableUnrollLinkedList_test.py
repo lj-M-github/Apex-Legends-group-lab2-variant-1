@@ -304,7 +304,7 @@ def test_IULL_api():
     # Find None in a list with None
     list_with_none = from_list([1, None, 3])
     found_none = find(list_with_none, lambda x: x is None)
-    assert found_none == (False, None)
+    assert found_none == (True, None)
 
     # Element not found
     not_found_element = find(test_list, lambda x: x > 10)
